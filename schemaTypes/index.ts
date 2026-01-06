@@ -1,3 +1,4 @@
-import {news} from './news'
+import {news} from './documents/news'
+import {sponsor} from './documents/sponsor'
 
-export const schemaTypes = [news]
+export const schemaTypes = [news, sponsor]
