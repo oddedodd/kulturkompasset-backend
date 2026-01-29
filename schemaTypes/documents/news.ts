@@ -1,9 +1,14 @@
 import {defineType, defineField} from 'sanity'
 
+/**
+ * News
+ * Nyheter som kan knyttes til én eller flere kategorier
+ */
 export const news = defineType({
   title: 'News',
   name: 'news',
   type: 'document',
+
   fields: [
     defineField({
       title: 'Title',
@@ -11,6 +16,7 @@ export const news = defineType({
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
+
     defineField({
       title: 'Slug',
       name: 'slug',
@@ -21,6 +27,19 @@ export const news = defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
+
+    /**
+     * Relasjon: News → Category
+     * Samme kategorier brukes også av Articles
+     */
+    defineField({
+      title: 'Categories',
+      name: 'categories',
+      type: 'array',
+      of: [{type: 'reference', to: [{type: 'category'}]}],
+      validation: (Rule) => Rule.unique(),
+    }),
+
     defineField({
       title: 'Featured Image',
       name: 'featuredImage',
@@ -37,6 +56,7 @@ export const news = defineType({
         },
       ],
     }),
+
     defineField({
       title: 'Body',
       name: 'body',
@@ -44,6 +64,7 @@ export const news = defineType({
       rows: 4,
       validation: (Rule) => Rule.required(),
     }),
+
     defineField({
       title: 'Date',
       name: 'date',
@@ -52,18 +73,18 @@ export const news = defineType({
       validation: (Rule) => Rule.required(),
     }),
   ],
+
   preview: {
     select: {
       title: 'title',
       media: 'featuredImage',
       date: 'date',
     },
-    prepare(selection) {
-      const {title, media, date} = selection
+    prepare({title, media, date}) {
       return {
-        title: title,
+        title,
         subtitle: date ? new Date(date).toLocaleDateString() : 'No date',
-        media: media,
+        media,
       }
     },
   },
