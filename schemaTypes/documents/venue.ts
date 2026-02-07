@@ -27,6 +27,13 @@ export const venue = defineType({
       description: 'Gateadresse (valgfri).',
     }),
     defineField({
+      name: 'logo',
+      title: 'Logo',
+      type: 'image',
+      description: 'Logo for venue/sted.',
+      options: {hotspot: true},
+    }),
+    defineField({
       name: 'geo',
       title: 'Kartposisjon',
       type: 'geopoint',
@@ -43,11 +50,13 @@ export const venue = defineType({
     select: {
       title: 'name',
       city: 'city',
+      media: 'logo',
     },
-    prepare({title, city}) {
+    prepare({title, city, media}) {
       return {
         title,
         subtitle: city || 'Ukjent by',
+        media,
       }
     },
   },
