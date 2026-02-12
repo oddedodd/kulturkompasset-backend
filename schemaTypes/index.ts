@@ -7,11 +7,21 @@ import {playlist} from './documents/playlist'
 import {siteSettings} from './documents/siteSettings'
 import {venue} from './documents/venue'
 import {cta} from './objects/cta'
+import {blockquoteBlock} from './objects/pageBuilder/blockquoteBlock'
+import {heroBlock} from './objects/pageBuilder/heroBlock'
+import {imageBlock} from './objects/pageBuilder/imageBlock'
+import {textBlock} from './objects/pageBuilder/textBlock'
+import {videoBlock} from './objects/pageBuilder/videoBlock'
 import {seo} from './objects/seo'
 
 export const schemaTypes = [
   cta,
   seo,
+  heroBlock,
+  imageBlock,
+  videoBlock,
+  blockquoteBlock,
+  textBlock,
   category,
   contributor,
   venue,

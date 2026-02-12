@@ -85,12 +85,44 @@ export const article = defineType({
       ],
     }),
     defineField({
-      name: 'body',
-      title: 'Innhold',
+      name: 'pageBuilder',
+      title: 'Sidebygger',
       type: 'array',
-      description: 'Selve artikkelteksten i blokkformat.',
+      description: 'Bygg artikkelen med fleksible blokker. Nye blokktyper kan legges til senere.',
+      of: [
+        defineArrayMember({type: 'heroBlock'}),
+        defineArrayMember({type: 'imageBlock'}),
+        defineArrayMember({type: 'videoBlock'}),
+        defineArrayMember({type: 'blockquoteBlock'}),
+        defineArrayMember({type: 'textBlock'}),
+      ],
+      options: {
+        insertMenu: {
+          groups: [
+            {name: 'intro', title: 'Intro', of: ['heroBlock']},
+            {name: 'media', title: 'Media', of: ['imageBlock', 'videoBlock']},
+            {name: 'content', title: 'Content', of: ['textBlock', 'blockquoteBlock']},
+          ],
+          views: [{name: 'list'}],
+        },
+      },
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const hasPageBuilder = Array.isArray(value) && value.length > 0
+          const legacyBody = context.document?.body
+          const hasLegacyBody = Array.isArray(legacyBody) && legacyBody.length > 0
+          return hasPageBuilder || hasLegacyBody
+            ? true
+            : 'Legg til minst én blokk i Sidebygger.'
+        }),
+    }),
+    defineField({
+      name: 'body',
+      title: 'Legacy innhold (gammel)',
+      type: 'array',
+      description: 'Gammelt tekstfelt beholdes midlertidig for eksisterende data.',
       of: [defineArrayMember({type: 'block'})],
-      validation: (Rule) => Rule.required(),
+      hidden: true,
     }),
     defineField({
       name: 'relatedEvents',
