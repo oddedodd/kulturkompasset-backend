@@ -8,7 +8,7 @@ export const structure: StructureResolver = (S) =>
   S.list()
     .title('Innhold')
     .items([
-      S.listItem().title('Dashboard').child(S.component().title('Dashboard').component(DashboardPane)),
+      S.listItem().id('dashboard').title('Dashboard').child(S.component().title('Dashboard').component(DashboardPane)),
       S.listItem()
         .title('Guider (Markdown)')
         .child(

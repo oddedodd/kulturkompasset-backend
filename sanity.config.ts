@@ -3,6 +3,7 @@ import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {schemaTypes} from './schemaTypes'
 import {structure} from './sanity.structure'
+import {DefaultStructureRedirectLayout} from './studio/defaultStructureRedirectLayout'
 
 const singletonTypes = new Set(['siteSettings'])
 
@@ -16,6 +17,11 @@ export default defineConfig({
   projectId,
   dataset,
   plugins: [structureTool({structure}), visionTool()],
+  studio: {
+    components: {
+      layout: DefaultStructureRedirectLayout,
+    },
+  },
   schema: {
     types: schemaTypes,
     templates: (prev) => prev.filter((template) => !singletonTypes.has(template.schemaType)),
