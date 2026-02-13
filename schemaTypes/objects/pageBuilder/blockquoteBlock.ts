@@ -17,16 +17,32 @@ export const blockquoteBlock = defineType({
       title: 'Kilde',
       type: 'string',
     }),
+    defineField({
+      name: 'backgroundImage',
+      title: 'Bakgrunnsbilde',
+      type: 'image',
+      description: 'Valgfritt bakgrunnsbilde for sitatblokken.',
+      options: {hotspot: true},
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt-tekst',
+          type: 'string',
+        }),
+      ],
+    }),
   ],
   preview: {
     select: {
       quote: 'quote',
       attribution: 'attribution',
+      media: 'backgroundImage',
     },
-    prepare({quote, attribution}) {
+    prepare({quote, attribution, media}) {
       return {
         title: quote ? `"${quote}"` : 'Blockquote',
         subtitle: attribution || 'Blockquote',
+        media,
       }
     },
   },

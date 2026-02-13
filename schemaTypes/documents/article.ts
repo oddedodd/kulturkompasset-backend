@@ -14,6 +14,12 @@ export const article = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'subtitle',
+      title: 'Undertittel',
+      type: 'string',
+      description: 'Valgfri undertittel som vises under tittel på artikkelsiden.',
+    }),
+    defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
@@ -92,16 +98,31 @@ export const article = defineType({
       of: [
         defineArrayMember({type: 'heroBlock'}),
         defineArrayMember({type: 'imageBlock'}),
+        defineArrayMember({type: 'imageGalleryBlock'}),
+        defineArrayMember({type: 'imageTextLeftBlock'}),
+        defineArrayMember({type: 'imageTextRightBlock'}),
         defineArrayMember({type: 'videoBlock'}),
+        defineArrayMember({type: 'embedBlock'}),
         defineArrayMember({type: 'blockquoteBlock'}),
         defineArrayMember({type: 'textBlock'}),
+        defineArrayMember({type: 'cta'}),
       ],
       options: {
         insertMenu: {
           groups: [
             {name: 'intro', title: 'Intro', of: ['heroBlock']},
-            {name: 'media', title: 'Media', of: ['imageBlock', 'videoBlock']},
-            {name: 'content', title: 'Content', of: ['textBlock', 'blockquoteBlock']},
+            {
+              name: 'media',
+              title: 'Media',
+              of: ['imageBlock', 'imageGalleryBlock', 'videoBlock', 'embedBlock'],
+            },
+            {
+              name: 'layouts',
+              title: 'Layout',
+              of: ['imageTextLeftBlock', 'imageTextRightBlock'],
+            },
+            {name: 'content', title: 'Innhold', of: ['textBlock', 'blockquoteBlock']},
+            {name: 'action', title: 'Handling', of: ['cta']},
           ],
           views: [{name: 'list'}],
         },
@@ -139,12 +160,6 @@ export const article = defineType({
       description: 'Partnere/sponsorer knyttet til artikkelinnholdet.',
       of: [defineArrayMember({type: 'reference', to: [{type: 'partner'}]})],
       validation: (Rule) => Rule.unique(),
-    }),
-    defineField({
-      name: 'cta',
-      title: 'Call to action',
-      type: 'cta',
-      description: 'Valgfri knapp/lenke nederst eller i artikkelkort.',
     }),
     defineField({
       name: 'seo',

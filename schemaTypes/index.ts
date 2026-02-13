@@ -8,8 +8,12 @@ import {siteSettings} from './documents/siteSettings'
 import {venue} from './documents/venue'
 import {cta} from './objects/cta'
 import {blockquoteBlock} from './objects/pageBuilder/blockquoteBlock'
+import {embedBlock} from './objects/pageBuilder/embedBlock'
 import {heroBlock} from './objects/pageBuilder/heroBlock'
 import {imageBlock} from './objects/pageBuilder/imageBlock'
+import {imageGalleryBlock} from './objects/pageBuilder/imageGalleryBlock'
+import {imageTextLeftBlock} from './objects/pageBuilder/imageTextLeftBlock'
+import {imageTextRightBlock} from './objects/pageBuilder/imageTextRightBlock'
 import {textBlock} from './objects/pageBuilder/textBlock'
 import {videoBlock} from './objects/pageBuilder/videoBlock'
 import {seo} from './objects/seo'
@@ -19,7 +23,11 @@ export const schemaTypes = [
   seo,
   heroBlock,
   imageBlock,
+  imageGalleryBlock,
+  imageTextLeftBlock,
+  imageTextRightBlock,
   videoBlock,
+  embedBlock,
   blockquoteBlock,
   textBlock,
   category,
