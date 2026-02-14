@@ -308,14 +308,94 @@ function ImageTextView({block, right}: {block: Block; right?: boolean}) {
 }
 
 function VideoBlockView({block}: {block: Block}) {
+  const getEmbedUrl = (url?: string) => {
+    if (!url) return null
+
+    try {
+      const parsed = new URL(url)
+      const host = parsed.hostname.replace(/^www\./, '')
+
+      if (host === 'youtu.be') {
+        const id = parsed.pathname.split('/').filter(Boolean)[0]
+        return id
+          ? `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`
+          : null
+      }
+
+      if (host === 'youtube.com' || host === 'm.youtube.com') {
+        if (parsed.pathname === '/watch') {
+          const id = parsed.searchParams.get('v')
+          return id
+            ? `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`
+            : null
+        }
+
+        if (parsed.pathname.startsWith('/shorts/')) {
+          const id = parsed.pathname.split('/').filter(Boolean)[1]
+          return id
+            ? `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`
+            : null
+        }
+
+        if (parsed.pathname.startsWith('/embed/')) {
+          const id = parsed.pathname.split('/').filter(Boolean)[1]
+          return id
+            ? `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`
+            : null
+        }
+      }
+
+      if (host === 'vimeo.com') {
+        const id = parsed.pathname.split('/').filter(Boolean)[0]
+        return id ? `https://player.vimeo.com/video/${id}` : null
+      }
+
+      if (host === 'player.vimeo.com') {
+        return `${parsed.protocol}//${parsed.host}${parsed.pathname}`
+      }
+
+      return null
+    } catch {
+      return null
+    }
+  }
+
+  const embedUrl = getEmbedUrl(block.url)
+
   return (
     <section style={{marginBottom: '1.2rem', padding: '0.9rem', border: '1px dashed #cbd5e1', borderRadius: '10px'}}>
       <strong>Video</strong>
       <div style={{marginTop: '0.35rem'}}>{block.title || 'Uten tittel'}</div>
-      {block.url && (
-        <a href={block.url} target="_blank" rel="noreferrer" style={{color: '#0b57d0'}}>
-          {block.url}
-        </a>
+      {embedUrl ? (
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            paddingTop: '56.25%',
+            marginTop: '0.6rem',
+          }}
+        >
+          <iframe
+            src={embedUrl}
+            title={block.title || 'Video'}
+            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+            allowFullScreen
+            referrerPolicy="strict-origin-when-cross-origin"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              border: 0,
+            }}
+          />
+        </div>
+      ) : (
+        block.url && (
+          <a href={block.url} target="_blank" rel="noreferrer" style={{color: '#0b57d0'}}>
+            {block.url}
+          </a>
+        )
       )}
       {block.caption && <p style={{marginBottom: 0}}>{block.caption}</p>}
     </section>
