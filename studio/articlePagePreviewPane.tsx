@@ -253,7 +253,7 @@ function ImageBlockView({block}: {block: Block}) {
   return (
     <section style={{marginBottom: '1.2rem'}}>
       {block.image?.asset?.url && (
-        <img src={block.image.asset.url} alt={block.image.alt || 'Bilde'} style={{width: '100%', borderRadius: '10px'}} />
+        <img src={block.image.asset.url} alt={block.image.alt || 'Bilde'} style={{width: '100%'}} />
       )}
       {block.caption && <p style={{marginTop: '0.4rem', color: '#4b5563'}}>{block.caption}</p>}
     </section>
@@ -270,7 +270,7 @@ function ImageGalleryBlockView({block}: {block: Block}) {
         {images.map((img, idx) => (
           <figure key={`${block._key || 'gallery'}-${idx}`} style={{margin: 0}}>
             {img.asset?.url && (
-              <img src={img.asset.url} alt={img.alt || `Galleri ${idx + 1}`} style={{width: '100%', borderRadius: '10px'}} />
+              <img src={img.asset.url} alt={img.alt || `Galleri ${idx + 1}`} style={{width: '100%'}} />
             )}
             {img.caption && <figcaption style={{fontSize: '12px', color: '#4b5563', marginTop: '0.25rem'}}>{img.caption}</figcaption>}
           </figure>
@@ -300,9 +300,9 @@ function ImageTextView({block, right}: {block: Block; right?: boolean}) {
         alignItems: 'start',
       }}
     >
-      {!right && block.image?.asset?.url && <img src={block.image.asset.url} alt={block.image.alt || 'Bilde'} style={{width: '100%', borderRadius: '10px'}} />}
+      {!right && block.image?.asset?.url && <img src={block.image.asset.url} alt={block.image.alt || 'Bilde'} style={{width: '100%'}} />}
       <div>{content}</div>
-      {right && block.image?.asset?.url && <img src={block.image.asset.url} alt={block.image.alt || 'Bilde'} style={{width: '100%', borderRadius: '10px'}} />}
+      {right && block.image?.asset?.url && <img src={block.image.asset.url} alt={block.image.alt || 'Bilde'} style={{width: '100%'}} />}
     </section>
   )
 }
@@ -431,6 +431,14 @@ function BlockquoteView({block}: {block: Block}) {
   )
 }
 
+function DividerBlockView() {
+  return (
+    <section style={{margin: '2rem 0'}}>
+      <hr style={{border: 0, borderTop: '1px solid #d1d5db'}} />
+    </section>
+  )
+}
+
 function renderBlock(block: Block) {
   switch (block._type) {
     case 'heroBlock':
@@ -453,6 +461,8 @@ function renderBlock(block: Block) {
       return <EmbedBlockView block={block} />
     case 'blockquoteBlock':
       return <BlockquoteView block={block} />
+    case 'dividerBlock':
+      return <DividerBlockView />
     case 'cta':
       return (
         <section style={{marginBottom: '1.2rem'}}>

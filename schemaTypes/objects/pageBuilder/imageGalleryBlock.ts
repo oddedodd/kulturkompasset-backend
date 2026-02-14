@@ -40,14 +40,11 @@ export const imageGalleryBlock = defineType({
   preview: {
     select: {
       title: 'title',
-      images: 'images',
       media: 'images.0',
     },
-    prepare({title, images, media}) {
-      const count = Array.isArray(images) ? images.length : 0
+    prepare({title, media}) {
       return {
         title: title || 'Bildegalleri',
-        subtitle: `${count} bilde${count === 1 ? '' : 'r'}`,
         media,
       }
     },

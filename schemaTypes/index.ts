@@ -8,6 +8,7 @@ import {siteSettings} from './documents/siteSettings'
 import {venue} from './documents/venue'
 import {cta} from './objects/cta'
 import {blockquoteBlock} from './objects/pageBuilder/blockquoteBlock'
+import {dividerBlock} from './objects/pageBuilder/dividerBlock'
 import {embedBlock} from './objects/pageBuilder/embedBlock'
 import {heroBlock} from './objects/pageBuilder/heroBlock'
 import {imageBlock} from './objects/pageBuilder/imageBlock'
@@ -31,6 +32,7 @@ export const schemaTypes = [
   videoBlock,
   embedBlock,
   blockquoteBlock,
+  dividerBlock,
   textBlock,
   category,
   contributor,
