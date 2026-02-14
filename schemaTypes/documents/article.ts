@@ -97,6 +97,7 @@ export const article = defineType({
       description: 'Bygg artikkelen med fleksible blokker. Nye blokktyper kan legges til senere.',
       of: [
         defineArrayMember({type: 'heroBlock'}),
+        defineArrayMember({type: 'leadBlock'}),
         defineArrayMember({type: 'imageBlock'}),
         defineArrayMember({type: 'imageGalleryBlock'}),
         defineArrayMember({type: 'imageTextLeftBlock'}),
@@ -110,7 +111,7 @@ export const article = defineType({
       options: {
         insertMenu: {
           groups: [
-            {name: 'intro', title: 'Intro', of: ['heroBlock']},
+            {name: 'intro', title: 'Intro', of: ['heroBlock', 'leadBlock']},
             {
               name: 'media',
               title: 'Media',

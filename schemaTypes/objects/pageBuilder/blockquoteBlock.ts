@@ -18,6 +18,22 @@ export const blockquoteBlock = defineType({
       type: 'string',
     }),
     defineField({
+      name: 'textColor',
+      title: 'Tekstfarge',
+      type: 'string',
+      description: 'Velg tekstfarge for sitatblokken.',
+      options: {
+        list: [
+          {title: 'Automatisk (anbefalt)', value: 'auto'},
+          {title: 'Lys', value: 'light'},
+          {title: 'Mørk', value: 'dark'},
+          {title: 'Primær blå', value: 'brand'},
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'auto',
+    }),
+    defineField({
       name: 'backgroundImage',
       title: 'Bakgrunnsbilde',
       type: 'image',
@@ -37,11 +53,14 @@ export const blockquoteBlock = defineType({
       quote: 'quote',
       attribution: 'attribution',
       media: 'backgroundImage',
+      textColor: 'textColor',
     },
-    prepare({quote, attribution, media}) {
+    prepare({quote, attribution, media, textColor}) {
       return {
         title: quote ? `"${quote}"` : 'Blockquote',
-        subtitle: attribution || 'Blockquote',
+        subtitle: [attribution || 'Blockquote', textColor ? `Tekst: ${textColor}` : null]
+          .filter(Boolean)
+          .join(' • '),
         media,
       }
     },

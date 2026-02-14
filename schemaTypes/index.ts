@@ -14,6 +14,7 @@ import {imageBlock} from './objects/pageBuilder/imageBlock'
 import {imageGalleryBlock} from './objects/pageBuilder/imageGalleryBlock'
 import {imageTextLeftBlock} from './objects/pageBuilder/imageTextLeftBlock'
 import {imageTextRightBlock} from './objects/pageBuilder/imageTextRightBlock'
+import {leadBlock} from './objects/pageBuilder/leadBlock'
 import {textBlock} from './objects/pageBuilder/textBlock'
 import {videoBlock} from './objects/pageBuilder/videoBlock'
 import {seo} from './objects/seo'
@@ -22,6 +23,7 @@ export const schemaTypes = [
   cta,
   seo,
   heroBlock,
+  leadBlock,
   imageBlock,
   imageGalleryBlock,
   imageTextLeftBlock,
