@@ -403,14 +403,133 @@ function VideoBlockView({block}: {block: Block}) {
 }
 
 function EmbedBlockView({block}: {block: Block}) {
+  const [soundCloudEmbed, setSoundCloudEmbed] = useState<{src: string; height: number} | null>(null)
+
+  const isSoundCloudUrl = (url?: string) => {
+    if (!url) return false
+    try {
+      const parsed = new URL(url)
+      const host = parsed.hostname.replace(/^www\./, '')
+      return host === 'soundcloud.com' || host === 'on.soundcloud.com'
+    } catch {
+      return false
+    }
+  }
+
+  useEffect(() => {
+    let mounted = true
+
+    const loadSoundCloudEmbed = async () => {
+      if (!isSoundCloudUrl(block.url)) {
+        if (mounted) setSoundCloudEmbed(null)
+        return
+      }
+
+      try {
+        const endpoint = new URL('https://soundcloud.com/oembed')
+        endpoint.searchParams.set('format', 'json')
+        endpoint.searchParams.set('url', block.url || '')
+        endpoint.searchParams.set('maxheight', '450')
+
+        const response = await fetch(endpoint.toString())
+        if (!response.ok) throw new Error('oEmbed request failed')
+
+        const payload = (await response.json()) as {html?: string; height?: number | string}
+        const html = payload.html || ''
+        const srcMatch = html.match(/src=\"([^\"]+)\"/)
+        const src = srcMatch?.[1]
+        const parsedHeight =
+          typeof payload.height === 'number'
+            ? payload.height
+            : Number.parseInt(String(payload.height || ''), 10)
+
+        if (!mounted) return
+
+        if (src) {
+          setSoundCloudEmbed({
+            src,
+            height: Number.isFinite(parsedHeight) ? parsedHeight : 300,
+          })
+        } else {
+          setSoundCloudEmbed(null)
+        }
+      } catch {
+        if (mounted) setSoundCloudEmbed(null)
+      }
+    }
+
+    void loadSoundCloudEmbed()
+
+    return () => {
+      mounted = false
+    }
+  }, [block.url])
+
+  const getSpotifyEmbed = (url?: string): {src: string; height: number} | null => {
+    if (!url) return null
+
+    try {
+      const parsed = new URL(url)
+      const host = parsed.hostname.replace(/^www\./, '')
+      if (host !== 'open.spotify.com' && host !== 'play.spotify.com') return null
+
+      const segments = parsed.pathname.split('/').filter(Boolean)
+      if (!segments.length) return null
+
+      const normalized = segments[0] === 'embed' ? segments : ['embed', ...segments]
+      const embedIndex = normalized.indexOf('embed')
+      const type = normalized[embedIndex + 1]
+      const id = normalized[embedIndex + 2]
+      if (!type || !id) return null
+
+      const src = `https://open.spotify.com/embed/${type}/${id}?utm_source=generator`
+      const heightByType: Record<string, number> = {
+        track: 152,
+        episode: 232,
+        album: 352,
+        artist: 352,
+        playlist: 352,
+        show: 352,
+      }
+
+      return {src, height: heightByType[type] || 352}
+    } catch {
+      return null
+    }
+  }
+
+  const spotify = getSpotifyEmbed(block.url)
+
   return (
     <section style={{marginBottom: '1.2rem', padding: '0.9rem', border: '1px dashed #cbd5e1', borderRadius: '10px'}}>
       <strong>Innbygging</strong>
       <div style={{marginTop: '0.35rem'}}>{block.title || 'Uten tittel'}</div>
-      {block.url && (
-        <a href={block.url} target="_blank" rel="noreferrer" style={{color: '#0b57d0'}}>
-          {block.url}
-        </a>
+      {spotify ? (
+        <iframe
+          src={spotify.src}
+          title={block.title || 'Spotify embed'}
+          width="100%"
+          height={spotify.height}
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+          style={{border: 0, marginTop: '0.6rem'}}
+        />
+      ) : soundCloudEmbed ? (
+        <iframe
+          src={soundCloudEmbed.src}
+          title={block.title || 'SoundCloud embed'}
+          width="100%"
+          height={soundCloudEmbed.height}
+          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+          loading="lazy"
+          style={{border: 0, marginTop: '0.6rem'}}
+        />
+      ) : (
+        block.url && (
+          <a href={block.url} target="_blank" rel="noreferrer" style={{color: '#0b57d0'}}>
+            {block.url}
+          </a>
+        )
       )}
       {block.caption && <p style={{marginBottom: 0}}>{block.caption}</p>}
     </section>
