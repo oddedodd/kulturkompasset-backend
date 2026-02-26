@@ -14,6 +14,12 @@ export const article = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'subtitle',
+      title: 'Undertittel',
+      type: 'string',
+      description: 'Valgfri undertittel som vises under tittel på artikkelsiden.',
+    }),
+    defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
@@ -85,12 +91,61 @@ export const article = defineType({
       ],
     }),
     defineField({
-      name: 'body',
-      title: 'Innhold',
+      name: 'pageBuilder',
+      title: 'Sidebygger',
       type: 'array',
-      description: 'Selve artikkelteksten i blokkformat.',
+      description: 'Bygg artikkelen med fleksible blokker. Nye blokktyper kan legges til senere.',
+      of: [
+        defineArrayMember({type: 'heroBlock'}),
+        defineArrayMember({type: 'leadBlock'}),
+        defineArrayMember({type: 'imageBlock'}),
+        defineArrayMember({type: 'imageGalleryBlock'}),
+        defineArrayMember({type: 'imageTextLeftBlock'}),
+        defineArrayMember({type: 'imageTextRightBlock'}),
+        defineArrayMember({type: 'videoBlock'}),
+        defineArrayMember({type: 'embedBlock'}),
+        defineArrayMember({type: 'blockquoteBlock'}),
+        defineArrayMember({type: 'dividerBlock'}),
+        defineArrayMember({type: 'textBlock'}),
+        defineArrayMember({type: 'cta'}),
+      ],
+      options: {
+        insertMenu: {
+          groups: [
+            {name: 'intro', title: 'Intro', of: ['heroBlock', 'leadBlock']},
+            {
+              name: 'media',
+              title: 'Media',
+              of: ['imageBlock', 'imageGalleryBlock', 'videoBlock', 'embedBlock'],
+            },
+            {
+              name: 'layouts',
+              title: 'Layout',
+              of: ['imageTextLeftBlock', 'imageTextRightBlock'],
+            },
+            {name: 'content', title: 'Innhold', of: ['textBlock', 'blockquoteBlock', 'dividerBlock']},
+            {name: 'action', title: 'Handling', of: ['cta']},
+          ],
+          views: [{name: 'list'}],
+        },
+      },
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const hasPageBuilder = Array.isArray(value) && value.length > 0
+          const legacyBody = context.document?.body
+          const hasLegacyBody = Array.isArray(legacyBody) && legacyBody.length > 0
+          return hasPageBuilder || hasLegacyBody
+            ? true
+            : 'Legg til minst én blokk i Sidebygger.'
+        }),
+    }),
+    defineField({
+      name: 'body',
+      title: 'Legacy innhold (gammel)',
+      type: 'array',
+      description: 'Gammelt tekstfelt beholdes midlertidig for eksisterende data.',
       of: [defineArrayMember({type: 'block'})],
-      validation: (Rule) => Rule.required(),
+      hidden: true,
     }),
     defineField({
       name: 'relatedEvents',
@@ -107,12 +162,6 @@ export const article = defineType({
       description: 'Partnere/sponsorer knyttet til artikkelinnholdet.',
       of: [defineArrayMember({type: 'reference', to: [{type: 'partner'}]})],
       validation: (Rule) => Rule.unique(),
-    }),
-    defineField({
-      name: 'cta',
-      title: 'Call to action',
-      type: 'cta',
-      description: 'Valgfri knapp/lenke nederst eller i artikkelkort.',
     }),
     defineField({
       name: 'seo',
