@@ -40,6 +40,7 @@ export const siteSettings = defineType({
                 list: [
                   {title: 'Kalender', value: 'kalender'},
                   {title: 'Backstage', value: 'backstage'},
+                  {title: 'Venues', value: 'venues'},
                   {title: 'Barn & familie', value: 'barn-og-familie'},
                   {title: 'Spillelister', value: 'spillelister'},
                   {title: 'Om Kulturkompasset', value: 'om-kulturkompasset'},
