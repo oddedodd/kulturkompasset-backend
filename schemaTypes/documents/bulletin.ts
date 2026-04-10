@@ -35,6 +35,12 @@ export const bulletin = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'place',
+      title: 'Sted',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: 'contact',
       title: 'Kontaktperson',
       type: 'string',
@@ -78,9 +84,10 @@ export const bulletin = defineType({
       title: 'name',
       subtitleDate: 'date',
       subtitleOrganizer: 'organizer',
+      subtitlePlace: 'place',
       media: 'image',
     },
-    prepare({title, subtitleDate, subtitleOrganizer, media}) {
+    prepare({title, subtitleDate, subtitleOrganizer, subtitlePlace, media}) {
       const dateText = subtitleDate
         ? new Date(subtitleDate).toLocaleString('nb-NO', {
             dateStyle: 'short',
@@ -89,7 +96,7 @@ export const bulletin = defineType({
         : 'Ingen dato'
       return {
         title,
-        subtitle: `${dateText} - ${subtitleOrganizer || 'Uten arrangør'}`,
+        subtitle: `${dateText} - ${subtitleOrganizer || 'Uten arrangør'} - ${subtitlePlace || 'Uten sted'}`,
         media,
       }
     },

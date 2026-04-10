@@ -6,6 +6,7 @@ type BulletinSubmissionDoc = {
   name?: string
   date?: string
   organizer?: string
+  place?: string
   contact?: string
   description?: string
   price?: string
@@ -61,6 +62,7 @@ export const approveBulletinSubmissionAction: DocumentActionComponent = (props) 
           slug: {_type: 'slug', current: generatedSlug},
           date: submission.date,
           organizer: submission.organizer ?? '',
+          place: submission.place ?? '',
           contact: submission.contact ?? '',
           description: submission.description ?? '',
           price: submission.price,
