@@ -16,7 +16,6 @@ type BulletinSubmissionDoc = {
     crop?: Record<string, unknown>
     hotspot?: Record<string, unknown>
   }
-  isApproved?: boolean
 }
 
 const API_VERSION = '2025-01-01'
@@ -41,20 +40,14 @@ export const approveBulletinSubmissionAction: DocumentActionComponent = (props) 
 
   if (props.type !== 'bulletinSubmission' || !submission) return null
 
-  const alreadyApproved = Boolean(submission.isApproved)
   const sourceSubmissionId = stripDraftPrefix(submission._id)
+  const draftSubmissionId = `drafts.${sourceSubmissionId}`
   const bulletinId = `bulletin.${sourceSubmissionId}`
 
   return {
-    label: alreadyApproved ? 'Allerede godkjent' : 'Godkjenn og opprett bulletin',
-    disabled: alreadyApproved,
-    tone: alreadyApproved ? 'default' : 'positive',
+    label: 'Godkjenn, opprett bulletin og slett innsending',
+    tone: 'positive',
     onHandle: async () => {
-      if (alreadyApproved) {
-        props.onComplete()
-        return
-      }
-
       const approvedAt = new Date().toISOString()
       const validImage = submission.image?.asset ? submission.image : undefined
       const generatedSlug = toSlug(submission.name || sourceSubmissionId) || sourceSubmissionId
@@ -72,16 +65,13 @@ export const approveBulletinSubmissionAction: DocumentActionComponent = (props) 
           description: submission.description ?? '',
           price: submission.price,
           image: validImage,
-          sourceSubmission: {_type: 'reference', _ref: sourceSubmissionId},
           approvedAt,
         })
-        .patch(props.id, {
-          set: {
-            isApproved: true,
-            approvedAt,
-            approvedBulletin: {_type: 'reference', _ref: bulletinId},
-          },
+        .patch(bulletinId, {
+          unset: ['sourceSubmission'],
         })
+        .delete(sourceSubmissionId)
+        .delete(draftSubmissionId)
         .commit()
 
       props.onComplete()

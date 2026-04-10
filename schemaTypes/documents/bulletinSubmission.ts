@@ -62,28 +62,6 @@ export const bulletinSubmission = defineType({
       initialValue: () => new Date().toISOString(),
       readOnly: true,
     }),
-    defineField({
-      name: 'isApproved',
-      title: 'Godkjent',
-      type: 'boolean',
-      initialValue: false,
-      readOnly: true,
-    }),
-    defineField({
-      name: 'approvedAt',
-      title: 'Godkjent tidspunkt',
-      type: 'datetime',
-      readOnly: true,
-      hidden: ({document}) => !document?.isApproved,
-    }),
-    defineField({
-      name: 'approvedBulletin',
-      title: 'Godkjent bulletin',
-      type: 'reference',
-      to: [{type: 'bulletin'}],
-      readOnly: true,
-      hidden: ({document}) => !document?.isApproved,
-    }),
   ],
   preview: {
     select: {
@@ -91,19 +69,17 @@ export const bulletinSubmission = defineType({
       subtitleDate: 'date',
       subtitleOrganizer: 'organizer',
       media: 'image',
-      isApproved: 'isApproved',
     },
-    prepare({title, subtitleDate, subtitleOrganizer, media, isApproved}) {
+    prepare({title, subtitleDate, subtitleOrganizer, media}) {
       const dateText = subtitleDate
         ? new Date(subtitleDate).toLocaleString('nb-NO', {
             dateStyle: 'short',
             timeStyle: 'short',
           })
         : 'Ingen dato'
-      const status = isApproved ? 'Godkjent' : 'Venter på godkjenning'
       return {
         title,
-        subtitle: `${status} - ${dateText} - ${subtitleOrganizer || 'Uten arrangør'}`,
+        subtitle: `Venter på godkjenning - ${dateText} - ${subtitleOrganizer || 'Uten arrangør'}`,
         media,
       }
     },

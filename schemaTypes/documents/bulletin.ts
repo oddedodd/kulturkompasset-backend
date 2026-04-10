@@ -66,14 +66,6 @@ export const bulletin = defineType({
       ],
     }),
     defineField({
-      name: 'sourceSubmission',
-      title: 'Kildeinnsending',
-      type: 'reference',
-      to: [{type: 'bulletinSubmission'}],
-      readOnly: true,
-      description: 'Referanse til opprinnelig innsending.',
-    }),
-    defineField({
       name: 'approvedAt',
       title: 'Godkjent',
       type: 'datetime',
