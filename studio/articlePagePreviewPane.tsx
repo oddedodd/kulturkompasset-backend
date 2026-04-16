@@ -53,6 +53,7 @@ type Block = {
   image?: ImageWithAsset
   backgroundImage?: ImageWithAsset
   images?: ImageWithAsset[]
+  textBoxes?: {text?: string; textColor?: string; backgroundColor?: string}[]
   linkedEvent?: {_ref?: string}
   linkedArticle?: {_ref?: string}
 }
@@ -630,6 +631,75 @@ function BlockquoteView({block}: {block: Block}) {
   )
 }
 
+function ScrollytellBlockView({block}: {block: Block}) {
+  const boxes = block.textBoxes || []
+
+  return (
+    <section
+      style={{
+        position: 'relative',
+        margin: '0 0 1.2rem',
+      }}
+    >
+      {block.backgroundImage?.asset?.url && (
+        <div
+          style={{
+            position: 'sticky',
+            top: 0,
+            height: '100vh',
+            overflow: 'hidden',
+          }}
+        >
+          <img
+            src={block.backgroundImage.asset.url}
+            alt={block.backgroundImage.alt || 'Bakgrunnsbilde'}
+            style={{
+              display: 'block',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          />
+        </div>
+      )}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 1,
+          marginTop: block.backgroundImage?.asset?.url ? '-100vh' : undefined,
+        }}
+      >
+        {boxes.map((box, idx) => (
+          <div
+            key={`scrollytell-box-${block._key || 'st'}-${idx}`}
+            style={{
+              height: '100vh',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '2rem 1.5rem',
+            }}
+          >
+            <div
+              style={{
+                maxWidth: '28rem',
+                padding: '1.2rem 1.4rem',
+                color: box.textColor || '#ffffff',
+                background: box.backgroundColor || 'rgba(0,0,0,0.6)',
+                fontSize: '1.1rem',
+                lineHeight: 1.6,
+                whiteSpace: 'pre-wrap',
+              }}
+            >
+              {box.text || 'Tom tekstboks'}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 function DividerBlockView() {
   return (
     <section style={{margin: '2rem 0'}}>
@@ -660,6 +730,8 @@ function renderBlock(block: Block) {
       return <EmbedBlockView block={block} />
     case 'blockquoteBlock':
       return <BlockquoteView block={block} />
+    case 'scrollytellBlock':
+      return <ScrollytellBlockView block={block} />
     case 'dividerBlock':
       return <DividerBlockView />
     case 'cta':

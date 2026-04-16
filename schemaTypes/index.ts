@@ -19,6 +19,7 @@ import {imageTextLeftBlock} from './objects/pageBuilder/imageTextLeftBlock'
 import {imageTextRightBlock} from './objects/pageBuilder/imageTextRightBlock'
 import {leadBlock} from './objects/pageBuilder/leadBlock'
 import {textBlock} from './objects/pageBuilder/textBlock'
+import {scrollytellBlock} from './objects/pageBuilder/scrollytellBlock'
 import {videoBlock} from './objects/pageBuilder/videoBlock'
 import {seo} from './objects/seo'
 
@@ -35,6 +36,7 @@ export const schemaTypes = [
   embedBlock,
   blockquoteBlock,
   dividerBlock,
+  scrollytellBlock,
   textBlock,
   bulletinSubmission,
   bulletin,

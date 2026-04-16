@@ -106,6 +106,7 @@ export const article = defineType({
         defineArrayMember({type: 'embedBlock'}),
         defineArrayMember({type: 'blockquoteBlock'}),
         defineArrayMember({type: 'dividerBlock'}),
+        defineArrayMember({type: 'scrollytellBlock'}),
         defineArrayMember({type: 'textBlock'}),
         defineArrayMember({type: 'cta'}),
       ],
@@ -121,7 +122,7 @@ export const article = defineType({
             {
               name: 'layouts',
               title: 'Layout',
-              of: ['imageTextLeftBlock', 'imageTextRightBlock'],
+              of: ['imageTextLeftBlock', 'imageTextRightBlock', 'scrollytellBlock'],
             },
             {name: 'content', title: 'Innhold', of: ['textBlock', 'blockquoteBlock', 'dividerBlock']},
             {name: 'action', title: 'Handling', of: ['cta']},
