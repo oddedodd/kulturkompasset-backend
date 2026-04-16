@@ -14,6 +14,14 @@ export const venue = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      description: 'URL-vennlig identifikator for venue-siden.',
+      options: {source: 'name', maxLength: 96},
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: 'city',
       title: 'By',
       type: 'string',

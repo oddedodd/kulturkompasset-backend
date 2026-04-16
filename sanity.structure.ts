@@ -42,8 +42,30 @@ export const structure: StructureResolver = (S) =>
               ]),
           ),
         ),
+      S.listItem()
+        .title('Bulletin-innsendinger')
+        .schemaType('bulletinSubmission')
+        .child(
+          S.documentList()
+            .title('Bulletin-innsendinger')
+            .schemaType('bulletinSubmission')
+            .filter('_type == "bulletinSubmission"')
+            .defaultOrdering([{field: 'submittedAt', direction: 'desc'}]),
+        ),
+      S.listItem()
+        .title('Bulletin')
+        .schemaType('bulletin')
+        .child(
+          S.documentList()
+            .title('Bulletin')
+            .schemaType('bulletin')
+            .filter('_type == "bulletin"')
+            .defaultOrdering([{field: 'date', direction: 'desc'}]),
+        ),
       ...S.documentTypeListItems().filter((item) => {
         const id = item.getId()
-        return id ? !singletonTypes.has(id) && id !== 'article' : true
+        return id
+          ? !singletonTypes.has(id) && id !== 'article' && id !== 'bulletinSubmission' && id !== 'bulletin'
+          : true
       }),
     ])

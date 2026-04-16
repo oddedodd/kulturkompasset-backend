@@ -1,4 +1,6 @@
 import {article} from './documents/article'
+import {bulletin} from './documents/bulletin'
+import {bulletinSubmission} from './documents/bulletinSubmission'
 import {category} from './documents/category'
 import {contributor} from './documents/contributor'
 import {event} from './documents/event'
@@ -34,6 +36,8 @@ export const schemaTypes = [
   blockquoteBlock,
   dividerBlock,
   textBlock,
+  bulletinSubmission,
+  bulletin,
   category,
   contributor,
   venue,
