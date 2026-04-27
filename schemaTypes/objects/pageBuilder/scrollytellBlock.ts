@@ -13,12 +13,33 @@ export const scrollytellBlock = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'backgroundType',
+      title: 'Bakgrunnstype',
+      type: 'string',
+      description: 'Velg om bakgrunnen skal være et bilde eller en Vimeo-video.',
+      options: {
+        list: [
+          {title: 'Bilde', value: 'image'},
+          {title: 'Video (Vimeo)', value: 'video'},
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'image',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: 'backgroundImage',
       title: 'Bakgrunnsbilde',
       type: 'image',
       description: 'Bilde som dekker hele visningsflaten bak tekstboksene.',
       options: {hotspot: true},
-      validation: (Rule) => Rule.required(),
+      hidden: ({parent}) => parent?.backgroundType === 'video',
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const parent = context.parent as {backgroundType?: string} | undefined
+          if (parent?.backgroundType === 'video') return true
+          return value ? true : 'Bakgrunnsbilde er påkrevd.'
+        }),
       fields: [
         defineField({
           name: 'alt',
@@ -27,6 +48,19 @@ export const scrollytellBlock = defineType({
           validation: (Rule) => Rule.required(),
         }),
       ],
+    }),
+    defineField({
+      name: 'backgroundVideoUrl',
+      title: 'Vimeo-URL',
+      type: 'url',
+      description: 'Lim inn en Vimeo-lenke (f.eks. https://vimeo.com/123456789).',
+      hidden: ({parent}) => parent?.backgroundType !== 'video',
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const parent = context.parent as {backgroundType?: string} | undefined
+          if (parent?.backgroundType !== 'video') return true
+          return value ? true : 'Vimeo-URL er påkrevd.'
+        }),
     }),
     defineField({
       name: 'textBoxes',

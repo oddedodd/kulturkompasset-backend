@@ -53,6 +53,8 @@ type Block = {
   image?: ImageWithAsset
   backgroundImage?: ImageWithAsset
   images?: ImageWithAsset[]
+  backgroundType?: 'image' | 'video'
+  backgroundVideoUrl?: string
   textBoxes?: {text?: string; textColor?: string; backgroundColor?: string}[]
   linkedEvent?: {_ref?: string}
   linkedArticle?: {_ref?: string}
@@ -631,8 +633,32 @@ function BlockquoteView({block}: {block: Block}) {
   )
 }
 
+function getVimeoEmbedUrl(url?: string): string | null {
+  if (!url) return null
+  try {
+    const parsed = new URL(url)
+    const host = parsed.hostname.replace(/^www\./, '')
+    if (host === 'vimeo.com') {
+      const id = parsed.pathname.split('/').filter(Boolean)[0]
+      return id
+        ? `https://player.vimeo.com/video/${id}?background=1&autoplay=1&loop=1&muted=1`
+        : null
+    }
+    if (host === 'player.vimeo.com') {
+      return `${parsed.protocol}//${parsed.host}${parsed.pathname}?background=1&autoplay=1&loop=1&muted=1`
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
 function ScrollytellBlockView({block}: {block: Block}) {
   const boxes = block.textBoxes || []
+  const isVideo = block.backgroundType === 'video'
+  const vimeoSrc = isVideo ? getVimeoEmbedUrl(block.backgroundVideoUrl) : null
+  const hasImageBg = !isVideo && !!block.backgroundImage?.asset?.url
+  const hasBackground = hasImageBg || !!vimeoSrc
 
   return (
     <section
@@ -641,7 +667,7 @@ function ScrollytellBlockView({block}: {block: Block}) {
         margin: '0 0 1.2rem',
       }}
     >
-      {block.backgroundImage?.asset?.url && (
+      {hasBackground && (
         <div
           style={{
             position: 'sticky',
@@ -650,23 +676,43 @@ function ScrollytellBlockView({block}: {block: Block}) {
             overflow: 'hidden',
           }}
         >
-          <img
-            src={block.backgroundImage.asset.url}
-            alt={block.backgroundImage.alt || 'Bakgrunnsbilde'}
-            style={{
-              display: 'block',
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-            }}
-          />
+          {vimeoSrc ? (
+            <iframe
+              src={vimeoSrc}
+              title="Bakgrunnsvideo"
+              allow="autoplay; fullscreen"
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '177.78vh',
+                height: '100vh',
+                minWidth: '100%',
+                minHeight: '100%',
+                border: 0,
+                pointerEvents: 'none',
+              }}
+            />
+          ) : (
+            <img
+              src={block.backgroundImage!.asset!.url!}
+              alt={block.backgroundImage?.alt || 'Bakgrunnsbilde'}
+              style={{
+                display: 'block',
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+              }}
+            />
+          )}
         </div>
       )}
       <div
         style={{
           position: 'relative',
           zIndex: 1,
-          marginTop: block.backgroundImage?.asset?.url ? '-100vh' : undefined,
+          marginTop: hasBackground ? '-100vh' : undefined,
         }}
       >
         {boxes.map((box, idx) => (
@@ -695,6 +741,7 @@ function ScrollytellBlockView({block}: {block: Block}) {
             </div>
           </div>
         ))}
+        {boxes.length > 0 && <div style={{height: '100vh'}} />}
       </div>
     </section>
   )
