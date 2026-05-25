@@ -4,7 +4,10 @@ import {structureTool} from 'sanity/structure'
 import {schemaTypes} from './schemaTypes'
 import {structure} from './sanity.structure'
 import {DefaultStructureRedirectLayout} from './studio/defaultStructureRedirectLayout'
-import {approveBulletinSubmissionAction} from './studio/approveBulletinSubmissionAction'
+import {
+  ApproveBulletinSubmissionAction,
+  ApproveBulletinSubmissionToEventAction,
+} from './studio/approveBulletinSubmissionAction'
 
 const singletonTypes = new Set(['siteSettings'])
 
@@ -30,7 +33,7 @@ export default defineConfig({
   document: {
     actions: (prev, context) => {
       if (context.schemaType === 'bulletinSubmission') {
-        return [...prev, approveBulletinSubmissionAction]
+        return [...prev, ApproveBulletinSubmissionAction, ApproveBulletinSubmissionToEventAction]
       }
 
       if (!singletonTypes.has(context.schemaType)) return prev

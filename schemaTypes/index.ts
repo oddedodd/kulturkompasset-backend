@@ -7,6 +7,7 @@ import {event} from './documents/event'
 import {partner} from './documents/partner'
 import {playlist} from './documents/playlist'
 import {siteSettings} from './documents/siteSettings'
+import {tips} from './documents/tips'
 import {venue} from './documents/venue'
 import {cta} from './objects/cta'
 import {blockquoteBlock} from './objects/pageBuilder/blockquoteBlock'
@@ -38,6 +39,7 @@ export const schemaTypes = [
   textBlock,
   bulletinSubmission,
   bulletin,
+  tips,
   category,
   contributor,
   venue,
