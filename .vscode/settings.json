@@ -1,0 +1,22 @@
+{
+    "window.title": "Kulturkompasset Backend — ${rootName} (Sanity Studio)",
+    "window.nativeTabs": false,
+    "window.titleBarStyle": "custom",
+  
+    "workbench.colorCustomizations": {
+      "titleBar.activeBackground": "#ca8a04",
+      "titleBar.activeForeground": "#111111",
+  
+      "titleBar.inactiveBackground": "#ca8a04cc",
+      "titleBar.inactiveForeground": "#333333",
+  
+      "activityBar.background": "#a16207",
+      "activityBar.foreground": "#ffffff",
+  
+      "statusBar.background": "#a16207",
+      "statusBar.foreground": "#ffffff",
+  
+      "statusBar.debuggingBackground": "#d97706",
+      "statusBar.debuggingForeground": "#111111"
+    }
+  }
