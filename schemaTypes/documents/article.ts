@@ -35,6 +35,7 @@ export const article = defineType({
       options: {
         list: [
           {title: 'Backstage', value: 'backstage'},
+          {title: 'Aktuelt', value: 'aktuelt'},
           {title: 'Nyheter', value: 'news'},
           {title: 'Barn & familie', value: 'barn-og-familie'},
           {title: 'Om Kulturkompasset', value: 'om-kulturkompasset'},

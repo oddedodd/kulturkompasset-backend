@@ -94,6 +94,7 @@ Daglig bruk:
 
 - `Kalender` -> henter fra `event` (dato, sted, kategorier, relasjoner)
 - `Backstage` -> henter `article` med `contentType = backstage`
+- `Aktuelt` -> henter `article` med `contentType = aktuelt`
 - `Barn & familie` -> henter `article` med `contentType = barn-og-familie` + relevante `event`
 - `Spillelister` -> henter `playlist`
 - `Om Kulturkompasset` -> henter `siteSettings.aboutText` (evt. artikkel med riktig type)
