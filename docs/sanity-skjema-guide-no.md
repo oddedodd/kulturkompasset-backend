@@ -19,6 +19,21 @@ I stedet for få "flate" typer er modellen delt opp i:
 - gjenbrukbare relasjoner (`category`, `contributor`, `venue`, `partner`)
 - global styring av forside/navigasjon (`siteSettings`)
 
+## 1b. Arrangement i menyen
+
+`Arrangement` er delt i undermenyer i studioet, slik at det er lett å finne frem:
+
+- **Kommende** — sortert med det nærmeste først. Ny-knappen ligger her.
+- **Gjennomførte** — nyeste først.
+- **Avlyste** — alt med status `Avlyst`.
+- **Mangler dato** — arrangement uten starttidspunkt, som ellers faller mellom stolene.
+- **Alle arrangement** — hele listen.
+
+Skillet mellom kommende og gjennomført regnes ut fra datoen, ikke `Status`-feltet: et
+arrangement er kommende til og med `Slutt` (eller `Start` om sluttid mangler). Et
+flerdagsarrangement ligger derfor under `Kommende` så lenge det pågår. `Status` styrer
+bare om noe havner under `Avlyste`.
+
 ## 2. Oversikt over aktive typer
 
 ## Dokumenttyper
@@ -60,7 +75,9 @@ Praktisk effekt:
 Bruk felt slik:
 
 - `mainNavigation`: hvilke menypunkter som skal vises i toppmeny.
-- `featuredEvents`: arrangement som vises på forsiden.
+- `featuredEvents`: arrangement som vises på forsiden. Søket her viser kun kommende,
+  ikke-avlyste arrangement, sortert med det nærmeste først. Arrangement du allerede
+  har valgt blir liggende selv etter at de har vært — fjern dem manuelt.
 - `featuredBackstage`: artikler for Backstage-seksjonen.
 - `featuredFamily`: artikler for Barn & familie-seksjonen.
 - `featuredPlaylists`: utvalgte spillelister.
@@ -254,7 +271,7 @@ Opprett ett dokument: `siteSettings`.
 Fyll ut slik:
 
 - `mainNavigation`: Kalender, Backstage, Barn & familie, Spillelister, Om Kulturkompasset
-- `featuredEvents`: velg 2-4 arrangement
+- `featuredEvents`: velg 2-4 arrangement (kun kommende dukker opp i søket)
 - `featuredBackstage`: velg 2-4 backstage-artikler
 - `featuredFamily`: velg 2-4 barn & familie-artikler
 - `featuredPlaylists`: velg 1-3 spillelister

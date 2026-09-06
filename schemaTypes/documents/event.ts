@@ -145,10 +145,22 @@ export const event = defineType({
       status: 'status',
     },
     prepare({title, startsAt, media, status}) {
-      const date = startsAt ? new Date(startsAt).toLocaleDateString('nb-NO') : 'Ingen dato'
+      const date = startsAt
+        ? new Date(startsAt).toLocaleString('nb-NO', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          })
+        : 'Ingen dato'
+      const statusLabel =
+        {upcoming: 'Kommende', completed: 'Gjennomført', cancelled: 'Avlyst'}[
+          status as 'upcoming' | 'completed' | 'cancelled'
+        ] || 'Kommende'
       return {
         title,
-        subtitle: `${date} • ${status || 'upcoming'}`,
+        subtitle: `${date} • ${statusLabel}`,
         media,
       }
     },
