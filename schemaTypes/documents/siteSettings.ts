@@ -1,5 +1,7 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 
+import {upcomingEventReferenceOptions} from '../../lib/eventQueries'
+
 export const siteSettings = defineType({
   name: 'siteSettings',
   title: 'Sideinnstillinger',
@@ -79,8 +81,16 @@ export const siteSettings = defineType({
       title: 'Utvalgte arrangement',
       type: 'array',
       fieldset: 'frontPage',
-      description: 'Arrangement som skal løftes frem på forsiden.',
-      of: [defineArrayMember({type: 'reference', to: [{type: 'event'}]})],
+      description:
+        'Arrangement som skal løftes frem på forsiden. Søket viser kun kommende arrangement, ' +
+        'sortert med det nærmeste først.',
+      of: [
+        defineArrayMember({
+          type: 'reference',
+          to: [{type: 'event'}],
+          options: upcomingEventReferenceOptions,
+        }),
+      ],
       validation: (Rule) => Rule.unique(),
     }),
     defineField({
