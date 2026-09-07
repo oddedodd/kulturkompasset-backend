@@ -1,4 +1,6 @@
-import {defineArrayMember, defineField, defineType} from 'sanity'
+import {defineField, defineType} from 'sanity'
+
+import {richTextMembers} from '../../../lib/richText'
 
 export const imageTextRightBlock = defineType({
   name: 'imageTextRightBlock',
@@ -24,7 +26,7 @@ export const imageTextRightBlock = defineType({
       name: 'content',
       title: 'Tekst',
       type: 'array',
-      of: [defineArrayMember({type: 'block'})],
+      of: richTextMembers,
       validation: (Rule) => Rule.required(),
     }),
   ],

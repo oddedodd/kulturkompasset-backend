@@ -12,10 +12,23 @@ type PortableChild = {
   marks?: string[]
 }
 
+type EventRef = {
+  _id?: string
+  title?: string
+  slug?: string
+  startsAt?: string
+  endsAt?: string
+  summary?: string
+  status?: string
+  venue?: {name?: string; city?: string}
+  heroImage?: ImageWithAsset
+}
+
 type PortableMarkDef = {
   _key: string
   _type: string
   href?: string
+  event?: EventRef
 }
 
 type PortableBlock = {
@@ -27,6 +40,18 @@ type PortableBlock = {
   children?: PortableChild[]
   markDefs?: PortableMarkDef[]
 }
+
+/** Arrangementskort satt inn mellom avsnittene i et tekstfelt. */
+type EventCardMember = {
+  _type?: string
+  _key?: string
+  title?: string
+  summary?: string
+  event?: EventRef
+}
+
+/** Et tekstfelt inneholder både vanlige avsnitt og innsatte arrangementskort. */
+type PortableMember = PortableBlock & EventCardMember
 
 type ImageWithAsset = {
   alt?: string
@@ -48,7 +73,7 @@ type Block = {
   lead?: string
   caption?: string
   url?: string
-  content?: PortableBlock[]
+  content?: PortableMember[]
   cta?: Cta
   image?: ImageWithAsset
   backgroundImage?: ImageWithAsset
@@ -63,6 +88,50 @@ type ArticleDoc = {
   excerpt?: string
   heroImage?: ImageWithAsset
   pageBuilder?: Block[]
+}
+
+const EVENT_DATE_FORMAT: Intl.DateTimeFormatOptions = {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+}
+
+/**
+ * Dato slik den vises på arrangementskort: enkeltdag med klokkeslett,
+ * flerdagsarrangement som et intervall.
+ */
+function formatEventDate(startsAt?: string, endsAt?: string) {
+  if (!startsAt) return 'Ingen dato'
+
+  const start = new Date(startsAt)
+  if (Number.isNaN(start.getTime())) return 'Ingen dato'
+
+  const end = endsAt ? new Date(endsAt) : null
+  const hasEnd = end !== null && !Number.isNaN(end.getTime())
+
+  if (hasEnd && start.toDateString() !== end.toDateString()) {
+    return `${start.toLocaleDateString('nb-NO', EVENT_DATE_FORMAT)} – ${end.toLocaleDateString('nb-NO', EVENT_DATE_FORMAT)}`
+  }
+
+  const time = start.toLocaleTimeString('nb-NO', {hour: '2-digit', minute: '2-digit'})
+  return `${start.toLocaleDateString('nb-NO', EVENT_DATE_FORMAT)} kl. ${time}`
+}
+
+/**
+ * Redaksjonelt varsel i forhåndsvisningen: et arrangement kan bli avlyst eller
+ * gjennomført etter at lenken ble satt inn, og da bør redaktøren se det.
+ */
+function getEventNotice(event?: EventRef): string | null {
+  if (!event) return null
+  if (event.status === 'cancelled') return 'Avlyst'
+
+  const endsAt = event.endsAt || event.startsAt
+  if (!endsAt) return null
+
+  const end = new Date(endsAt)
+  if (Number.isNaN(end.getTime())) return null
+
+  return end.getTime() < Date.now() ? 'Gjennomført' : null
 }
 
 function renderInlineChildren(block: PortableBlock) {
@@ -88,6 +157,31 @@ function renderInlineChildren(block: PortableBlock) {
               {node}
             </a>
           )
+        } else if (def?._type === 'eventLink') {
+          // Frontend eier URL-en til arrangementssiden, så her vises lenken
+          // bare visuelt — med dato og eventuelt varsel i tooltip.
+          const notice = getEventNotice(def.event)
+          const label = def.event
+            ? `${def.event.title || 'Uten tittel'} • ${formatEventDate(def.event.startsAt, def.event.endsAt)}${notice ? ` • ${notice}` : ''}`
+            : 'Ingen arrangement valgt'
+
+          node = (
+            <span
+              key={`${block._key || 'b'}-ev-${idx}`}
+              title={label}
+              style={{
+                color: def.event ? '#0b57d0' : '#b91c1c',
+                textDecoration: 'underline',
+                textDecorationStyle: def.event ? 'solid' : 'dotted',
+                cursor: 'help',
+              }}
+            >
+              {node}
+              <span aria-hidden style={{fontSize: '0.8em', marginLeft: '0.2em'}}>
+                {notice ? '⚠️' : '📅'}
+              </span>
+            </span>
+          )
         }
       }
     }
@@ -96,7 +190,91 @@ function renderInlineChildren(block: PortableBlock) {
   })
 }
 
-function renderPortableBlocks(blocks?: PortableBlock[]) {
+function EventCardView({card}: {card: EventCardMember}) {
+  const event = card.event
+
+  if (!event) {
+    return (
+      <div
+        style={{
+          margin: '0 0 1.2rem',
+          padding: '0.9rem',
+          border: '1px dashed #fca5a5',
+          borderRadius: '10px',
+          color: '#b91c1c',
+        }}
+      >
+        Arrangementskort uten valgt arrangement.
+      </div>
+    )
+  }
+
+  const title = card.title || event.title || 'Uten tittel'
+  const summary = card.summary || event.summary
+  const place = [event.venue?.name, event.venue?.city].filter(Boolean).join(', ')
+  const meta = [formatEventDate(event.startsAt, event.endsAt), place].filter(Boolean).join(' · ')
+  const notice = getEventNotice(event)
+  const imageUrl = event.heroImage?.asset?.url
+
+  return (
+    <div
+      style={{
+        margin: '0 0 1.2rem',
+        border: '1px solid #d1d5db',
+        borderRadius: '12px',
+        overflow: 'hidden',
+        background: '#f9fafb',
+        display: 'grid',
+        gap: '0',
+        gridTemplateColumns: imageUrl ? 'minmax(0, 12rem) minmax(0, 1fr)' : 'minmax(0, 1fr)',
+        alignItems: 'stretch',
+      }}
+    >
+      {imageUrl && (
+        <img
+          src={imageUrl}
+          alt={event.heroImage?.alt || title}
+          style={{display: 'block', width: '100%', height: '100%', objectFit: 'cover'}}
+        />
+      )}
+      <div style={{padding: '0.9rem 1rem'}}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            fontSize: '12px',
+            fontWeight: 600,
+            letterSpacing: '0.02em',
+            textTransform: 'uppercase',
+            color: '#4b5563',
+          }}
+        >
+          <span>{meta}</span>
+          {notice && (
+            <span
+              style={{
+                padding: '0.1rem 0.4rem',
+                borderRadius: '999px',
+                background: notice === 'Avlyst' ? '#fee2e2' : '#e5e7eb',
+                color: notice === 'Avlyst' ? '#b91c1c' : '#374151',
+              }}
+            >
+              {notice}
+            </span>
+          )}
+        </div>
+        <h3 style={{margin: '0.35rem 0 0.4rem', fontSize: '1.15rem', lineHeight: 1.25}}>{title}</h3>
+        {summary && (
+          <p style={{margin: '0 0 0.55rem', color: '#374151', lineHeight: 1.55}}>{summary}</p>
+        )}
+        <span style={{color: '#0b57d0', fontWeight: 600}}>Les mer →</span>
+      </div>
+    </div>
+  )
+}
+
+function renderPortableBlocks(blocks?: PortableMember[]) {
   if (!Array.isArray(blocks) || blocks.length === 0) return null
 
   const nodes: React.ReactNode[] = []
@@ -122,6 +300,12 @@ function renderPortableBlocks(blocks?: PortableBlock[]) {
   }
 
   blocks.forEach((block, index) => {
+    if (block?._type === 'eventCard') {
+      flushList()
+      nodes.push(<EventCardView key={block._key || `ec-${index}`} card={block} />)
+      return
+    }
+
     if (block?._type !== 'block') return
 
     if (block.listItem) {
@@ -713,7 +897,29 @@ export function ArticlePagePreviewPane(props: {documentId?: string}) {
           ...,
           image{alt, caption, asset->{url}},
           backgroundImage{alt, asset->{url}},
-          images[]{alt, caption, asset->{url}}
+          images[]{alt, caption, asset->{url}},
+          content[]{
+            ...,
+            _type == "eventCard" => {
+              event->{
+                _id,
+                title,
+                "slug": slug.current,
+                startsAt,
+                endsAt,
+                summary,
+                status,
+                venue->{name, city},
+                heroImage{alt, asset->{url}}
+              }
+            },
+            markDefs[]{
+              ...,
+              _type == "eventLink" => {
+                event->{_id, title, "slug": slug.current, startsAt, endsAt, status}
+              }
+            }
+          }
         }
       }`
 
