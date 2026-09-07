@@ -4,6 +4,7 @@ import {bulletinSubmission} from './documents/bulletinSubmission'
 import {category} from './documents/category'
 import {contributor} from './documents/contributor'
 import {event} from './documents/event'
+import {eventImport} from './documents/eventImport'
 import {partner} from './documents/partner'
 import {playlist} from './documents/playlist'
 import {siteSettings} from './documents/siteSettings'
@@ -47,6 +48,7 @@ export const schemaTypes = [
   venue,
   partner,
   event,
+  eventImport,
   article,
   playlist,
   siteSettings,

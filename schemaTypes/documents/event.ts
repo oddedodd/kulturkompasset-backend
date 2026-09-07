@@ -136,6 +136,76 @@ export const event = defineType({
       type: 'seo',
       description: 'Valgfrie metadata for søk og deling.',
     }),
+
+    // --- Importerte arrangement -------------------------------------------
+    // Feltene under fylles av importfunksjonen og er sporbarhet, ikke
+    // redaksjonelt innhold. De ligger i en egen sammenslått gruppe nederst og
+    // er tomme på arrangement som er opprettet for hånd.
+    defineField({
+      name: 'importSource',
+      title: 'Importert fra',
+      type: 'string',
+      description: 'Hvilken kommunes program arrangementet ble hentet fra.',
+      fieldset: 'import',
+      readOnly: true,
+      options: {
+        list: [
+          {title: 'Namsos kulturhus', value: 'namsos'},
+          {title: 'Kulturhuset Kuben (Grong)', value: 'grong'},
+          {title: 'Kultur i Nærøysund', value: 'naroysund'},
+        ],
+      },
+    }),
+    defineField({
+      name: 'importWarning',
+      title: 'Varsel fra importen',
+      type: 'text',
+      rows: 3,
+      description:
+        'Settes når arrangementet ligner på et som finnes fra før. Sjekk mot det som nevnes her før du publiserer, og tøm feltet når du har vurdert det.',
+      fieldset: 'import',
+    }),
+    defineField({
+      name: 'importVenueName',
+      title: 'Sted hos kilden',
+      type: 'string',
+      description:
+        'Stedsnavnet slik kilden skrev det. Fyll ut Sted-feltet over hvis importen ikke fant et matchende sted.',
+      fieldset: 'import',
+      readOnly: true,
+    }),
+    defineField({
+      name: 'importImageUrl',
+      title: 'Bilde hos kilden (URL)',
+      type: 'url',
+      description:
+        'Originalbildet hos kilden. Importen laster det ned til Hovedbilde automatisk; lenken ligger her for etterprøving og i tilfelle nedlastingen feilet.',
+      fieldset: 'import',
+      readOnly: true,
+    }),
+    defineField({
+      name: 'importExternalId',
+      title: 'ID hos kilden',
+      type: 'string',
+      description: 'Brukes til å kjenne igjen arrangementet ved senere import.',
+      fieldset: 'import',
+      readOnly: true,
+    }),
+    defineField({
+      name: 'importedAt',
+      title: 'Importert',
+      type: 'datetime',
+      fieldset: 'import',
+      readOnly: true,
+    }),
+  ],
+  fieldsets: [
+    {
+      name: 'import',
+      title: 'Import',
+      description: 'Spor fra automatisk import. Tomt på arrangement lagt inn for hånd.',
+      options: {collapsible: true, collapsed: true},
+    },
   ],
   preview: {
     select: {

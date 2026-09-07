@@ -48,6 +48,21 @@ fram et konkret arrangement — har tekstfeltene i sidebyggeren to muligheter:
 
 Begge viser bare kommende arrangement.
 
+## B2) Importere arrangement fra kommunene
+
+Under **Importerte arrangement › Importer fra kommunene** kan du hente
+programmet til Namsos, Grong eller Nærøysund. Ta én kommune om gangen.
+
+- Alt som hentes blir **kladd** — ingenting publiseres automatisk.
+- Gå gjennom dem under **Til gjennomgang** og publiser det som skal ut.
+- Sjekk **Mulige duplikater** ekstra nøye: de ligner på noe vi har fra før.
+- Spilles noe flere ganger, får hver forestilling sin egen kladd med sin dato.
+- Bilder følger med automatisk.
+- Står **Sted** tomt, fant ikke importen et sikkert treff. Kildens stedsnavn
+  ligger under `Import › Sted hos kilden` — fyll inn selv.
+- Når arrangementet er klart, velg **«Lagre som arrangement og slett oppføring»**
+  nederst. Da publiseres det og forsvinner fra importlistene.
+
 ## C) Spilleliste (`playlist`)
 
 Fyll alltid ut:

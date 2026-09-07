@@ -1,6 +1,7 @@
 import type {StructureResolver} from 'sanity/structure'
 import {DashboardPane} from './studio/dashboardPane'
 import {ArticlePagePreviewPane} from './studio/articlePagePreviewPane'
+import {ImportEventsPane} from './studio/importEventsPane'
 import {FullGuidePane, QuickGuidePane} from './studio/guidePanes'
 import {
   CANCELLED_EVENT_FILTER,
@@ -10,6 +11,18 @@ import {
 } from './lib/eventQueries'
 
 const singletonTypes = new Set(['siteSettings'])
+
+/**
+ * Importerte arrangement som ennå ikke er publisert, slik at et arrangement
+ * forsvinner herfra så snart redaktøren har publisert det.
+ *
+ * Merk `_originalId`, ikke `_id`: dokumentlistene i studioet kjører i
+ * `drafts`-perspektivet, der `_id` er normalisert til den publiserte ID-en.
+ * `_id in path("drafts.**")` gir derfor null treff her, mens det ser riktig ut
+ * i Vision (som bruker `raw`). `_originalId` beholder den faktiske ID-en.
+ */
+const IMPORTED_DRAFT_FILTER =
+  '_type == "event" && defined(importSource) && _originalId in path("drafts.**")'
 
 export const structure: StructureResolver = (S) =>
   S.list()
@@ -126,6 +139,65 @@ export const structure: StructureResolver = (S) =>
             ]),
         ),
       S.listItem()
+        .id('imported-events')
+        .title('Importerte arrangement')
+        .child(
+          S.list()
+            .title('Importerte arrangement')
+            .items([
+              S.listItem()
+                .id('import-run')
+                .title('Importer fra kommunene')
+                .child(S.component().title('Importer arrangement').component(ImportEventsPane)),
+              S.divider(),
+              S.listItem()
+                .id('imported-review')
+                .title('Til gjennomgang')
+                .child(
+                  S.documentList()
+                    .id('imported-review-list')
+                    .title('Importerte kladder')
+                    .schemaType('event')
+                    .filter(IMPORTED_DRAFT_FILTER)
+                    .defaultOrdering([{field: 'startsAt', direction: 'asc'}]),
+                ),
+              S.listItem()
+                .id('imported-flagged')
+                .title('Mulige duplikater')
+                .child(
+                  S.documentList()
+                    .id('imported-flagged-list')
+                    .title('Flagget som mulig duplikat')
+                    .schemaType('event')
+                    .filter(`${IMPORTED_DRAFT_FILTER} && defined(importWarning)`)
+                    .defaultOrdering([{field: 'startsAt', direction: 'asc'}]),
+                ),
+              S.listItem()
+                .id('imported-all')
+                .title('Alle importerte')
+                .child(
+                  S.documentList()
+                    .id('imported-all-list')
+                    .title('Alle importerte arrangement')
+                    .schemaType('event')
+                    .filter('_type == "event" && defined(importSource)')
+                    .defaultOrdering([{field: 'startsAt', direction: 'asc'}]),
+                ),
+              S.divider(),
+              S.listItem()
+                .id('import-log')
+                .title('Importlogg')
+                .child(
+                  S.documentList()
+                    .id('import-log-list')
+                    .title('Kjørte importer')
+                    .schemaType('eventImport')
+                    .filter('_type == "eventImport"')
+                    .defaultOrdering([{field: 'requestedAt', direction: 'desc'}]),
+                ),
+            ]),
+        ),
+      S.listItem()
         .title('Bulletin')
         .schemaType('bulletin')
         .child(
@@ -142,7 +214,8 @@ export const structure: StructureResolver = (S) =>
               id !== 'article' &&
               id !== 'bulletinSubmission' &&
               id !== 'bulletin' &&
-              id !== 'event'
+              id !== 'event' &&
+              id !== 'eventImport'
           : true
       }),
     ])

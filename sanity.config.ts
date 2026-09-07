@@ -5,6 +5,7 @@ import {schemaTypes} from './schemaTypes'
 import {structure} from './sanity.structure'
 import {DefaultStructureRedirectLayout} from './studio/defaultStructureRedirectLayout'
 import {approveBulletinSubmissionAction} from './studio/approveBulletinSubmissionAction'
+import {publishImportedEventAction} from './studio/publishImportedEventAction'
 
 const singletonTypes = new Set(['siteSettings'])
 
@@ -31,6 +32,12 @@ export default defineConfig({
     actions: (prev, context) => {
       if (context.schemaType === 'bulletinSubmission') {
         return [...prev, approveBulletinSubmissionAction]
+      }
+
+      // Handlingen skjuler seg selv på arrangement som ikke er importert,
+      // så den kan legges på hele typen.
+      if (context.schemaType === 'event') {
+        return [...prev, publishImportedEventAction]
       }
 
       if (!singletonTypes.has(context.schemaType)) return prev

@@ -55,12 +55,26 @@ Begge tilbyr kun **kommende** arrangement, sortert med det nærmeste først — 
 som undermenyen `Kommende`. Skal du lenke til noe som er gjennomført, bruk feltet
 `Relaterte arrangement` nederst i artikkelen i stedet.
 
+## 1d. Import av arrangement fra kommunene
+
+Redaktører kan hente kulturprogrammet fra Namsos, Grong og Nærøysund inn i
+studioet under **Importerte arrangement**. Importerte arrangement blir liggende
+som kladd til noen publiserer dem manuelt, og duplikater mot eksisterende
+arrangement sjekkes på dato, sted og navn.
+
+Feltene under `Import`-gruppen på `event` fylles av importen og er sporbarhet,
+ikke redaksjonelt innhold. De er tomme på arrangement lagt inn for hånd.
+
+Full beskrivelse, inkludert hvordan kildene hentes og hvordan funksjonen
+deployes, ligger i [import-av-arrangement.md](import-av-arrangement.md).
+
 ## 2. Oversikt over aktive typer
 
 ## Dokumenttyper
 
 - `siteSettings`
 - `event`
+- `eventImport` (logg over import fra kommunene, se [import-av-arrangement.md](import-av-arrangement.md))
 - `article`
 - `playlist`
 - `category`
