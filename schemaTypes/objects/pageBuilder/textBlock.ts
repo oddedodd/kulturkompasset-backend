@@ -1,4 +1,6 @@
-import {defineArrayMember, defineField, defineType} from 'sanity'
+import {defineField, defineType} from 'sanity'
+
+import {richTextMembers} from '../../../lib/richText'
 
 export const textBlock = defineType({
   name: 'textBlock',
@@ -9,7 +11,7 @@ export const textBlock = defineType({
       name: 'content',
       title: 'Tekstinnhold',
       type: 'array',
-      of: [defineArrayMember({type: 'block'})],
+      of: richTextMembers,
       validation: (Rule) => Rule.required(),
     }),
   ],

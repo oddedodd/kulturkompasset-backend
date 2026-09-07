@@ -9,6 +9,8 @@ import {playlist} from './documents/playlist'
 import {siteSettings} from './documents/siteSettings'
 import {venue} from './documents/venue'
 import {cta} from './objects/cta'
+import {eventCard} from './objects/eventCard'
+import {eventLink} from './objects/eventLink'
 import {blockquoteBlock} from './objects/pageBuilder/blockquoteBlock'
 import {dividerBlock} from './objects/pageBuilder/dividerBlock'
 import {embedBlock} from './objects/pageBuilder/embedBlock'
@@ -25,6 +27,8 @@ import {seo} from './objects/seo'
 export const schemaTypes = [
   cta,
   seo,
+  eventLink,
+  eventCard,
   heroBlock,
   leadBlock,
   imageBlock,

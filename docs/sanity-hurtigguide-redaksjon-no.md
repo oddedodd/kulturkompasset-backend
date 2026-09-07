@@ -38,6 +38,16 @@ Bør fylles ut:
 - `Hovedbilde`
 - `Relaterte arrangement` (hvis relevant)
 
+Skal du lenke til et arrangement midt i teksten — f.eks. når noen du intervjuer trekker
+fram et konkret arrangement — har tekstfeltene i sidebyggeren to muligheter:
+
+- Marker teksten og velg lenkeknappen i verktøylinja → `Lenke til arrangement`.
+- Eller sett inn blokka `Arrangement` mellom avsnittene for et helt kort med dato, tittel
+  og ingress. `Egen tittel` og `Egen ingress` kan overstyres per artikkel; står de tomme,
+  brukes teksten fra arrangementet.
+
+Begge viser bare kommende arrangement.
+
 ## C) Spilleliste (`playlist`)
 
 Fyll alltid ut:

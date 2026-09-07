@@ -34,6 +34,27 @@ arrangement er kommende til og med `Slutt` (eller `Start` om sluttid mangler). E
 flerdagsarrangement ligger derfor under `Kommende` så lenge det pågår. `Status` styrer
 bare om noe havner under `Avlyste`.
 
+## 1c. Lenke til arrangement fra artikkeltekst
+
+I tekstfeltene i sidebyggeren (`Text (Portable Text)` og de to `Bilde + tekst`-blokkene)
+kan redaktøren lenke rett til et arrangement. Det er nyttig når f.eks. kultursjefen
+intervjues og trekker fram konkrete arrangement.
+
+To måter, avhengig av hvor mye plass lenken skal ta:
+
+- **Lenke til arrangement** (`eventLink`) — en markering i den løpende teksten, på linje
+  med en vanlig URL-lenke. Marker ordet eller setningen, velg lenkeknappen i verktøylinja
+  og deretter `Lenke til arrangement`. Den markerte teksten blir lenketeksten.
+- **Arrangement** (`eventCard`) — et helt kort som settes inn mellom avsnittene, via
+  innsettingsmenyen i tekstfeltet. Kortet viser dato, tittel og ingress fra arrangementet.
+  Feltene `Egen tittel` og `Egen ingress` er valgfrie: står de tomme, brukes teksten fra
+  arrangementet. Fyll dem ut når kortet skal vinkles mot akkurat denne saken — det endrer
+  bare artikkelen, ikke selve arrangementsdokumentet.
+
+Begge tilbyr kun **kommende** arrangement, sortert med det nærmeste først — samme regel
+som undermenyen `Kommende`. Skal du lenke til noe som er gjennomført, bruk feltet
+`Relaterte arrangement` nederst i artikkelen i stedet.
+
 ## 2. Oversikt over aktive typer
 
 ## Dokumenttyper
@@ -51,6 +72,8 @@ bare om noe havner under `Avlyste`.
 
 - `seo`
 - `cta`
+- `eventLink` (annotasjon i tekst)
+- `eventCard` (kort i tekst)
 
 ## 3. Hvordan relasjonene fungerer
 
