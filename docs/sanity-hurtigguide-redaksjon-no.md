@@ -48,6 +48,22 @@ fram et konkret arrangement — har tekstfeltene i sidebyggeren to muligheter:
 
 Begge viser bare kommende arrangement.
 
+Skal du lenke videre til en hel side, bruk blokka `Lenke til side` under **Handling**
+i sidebyggeren:
+
+- Velg først hva lenken peker på:
+  - `Intern side i Kulturkompasset` — en enkelt artikkel, arrangement, spilleliste,
+    spillested, bidragsyter, bulletin eller kategori.
+  - `Seksjon fra menyen` — en av seksjonene du har satt opp under
+    **Sideinnstillinger › Navigasjon**. Lista henter menypunktene dine direkte,
+    så du ser din egen menytekst («Historier», «Spillesteder») og ikke
+    tekniske navn.
+  - `Ekstern nettside` — en adresse utenfor Kulturkompasset.
+- `Tittel` kan stå tom på interne lenker og seksjoner — da brukes tittelen på siden,
+  eller teksten menypunktet har. På eksterne lenker må du skrive den selv.
+- `Ingress` er valgfri. Lar du den stå tom, vises «Les mer her».
+- `Bilde` er valgfritt, og kan enten lastes opp eller hentes fra bildebiblioteket.
+
 ## B2) Importere arrangement fra kommunene
 
 Under **Importerte arrangement › Importer fra kommunene** kan du hente

@@ -4,7 +4,8 @@ export const article = defineType({
   name: 'article',
   title: 'Artikkel',
   type: 'document',
-  description: 'Redaksjonelt innhold for Backstage, Barn & familie, Om-sider, guider og anmeldelser.',
+  description:
+    'Redaksjonelt innhold for Backstage, Barn & familie, Om-sider, guider og anmeldelser.',
   fields: [
     defineField({
       name: 'title',
@@ -108,6 +109,7 @@ export const article = defineType({
         defineArrayMember({type: 'blockquoteBlock'}),
         defineArrayMember({type: 'dividerBlock'}),
         defineArrayMember({type: 'textBlock'}),
+        defineArrayMember({type: 'linkBlock'}),
         defineArrayMember({type: 'cta'}),
       ],
       options: {
@@ -124,8 +126,12 @@ export const article = defineType({
               title: 'Layout',
               of: ['imageTextLeftBlock', 'imageTextRightBlock'],
             },
-            {name: 'content', title: 'Innhold', of: ['textBlock', 'blockquoteBlock', 'dividerBlock']},
-            {name: 'action', title: 'Handling', of: ['cta']},
+            {
+              name: 'content',
+              title: 'Innhold',
+              of: ['textBlock', 'blockquoteBlock', 'dividerBlock'],
+            },
+            {name: 'action', title: 'Handling', of: ['linkBlock', 'cta']},
           ],
           views: [{name: 'list'}],
         },
@@ -135,9 +141,7 @@ export const article = defineType({
           const hasPageBuilder = Array.isArray(value) && value.length > 0
           const legacyBody = context.document?.body
           const hasLegacyBody = Array.isArray(legacyBody) && legacyBody.length > 0
-          return hasPageBuilder || hasLegacyBody
-            ? true
-            : 'Legg til minst én blokk i Sidebygger.'
+          return hasPageBuilder || hasLegacyBody ? true : 'Legg til minst én blokk i Sidebygger.'
         }),
     }),
     defineField({

@@ -21,6 +21,7 @@ import {imageGalleryBlock} from './objects/pageBuilder/imageGalleryBlock'
 import {imageTextLeftBlock} from './objects/pageBuilder/imageTextLeftBlock'
 import {imageTextRightBlock} from './objects/pageBuilder/imageTextRightBlock'
 import {leadBlock} from './objects/pageBuilder/leadBlock'
+import {linkBlock} from './objects/pageBuilder/linkBlock'
 import {textBlock} from './objects/pageBuilder/textBlock'
 import {videoBlock} from './objects/pageBuilder/videoBlock'
 import {seo} from './objects/seo'
@@ -41,6 +42,7 @@ export const schemaTypes = [
   blockquoteBlock,
   dividerBlock,
   textBlock,
+  linkBlock,
   bulletinSubmission,
   bulletin,
   category,

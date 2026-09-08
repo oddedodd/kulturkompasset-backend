@@ -1,6 +1,7 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 
 import {upcomingEventReferenceOptions} from '../../lib/eventQueries'
+import {NAVIGATION_SECTIONS} from '../../lib/navigation'
 
 export const siteSettings = defineType({
   name: 'siteSettings',
@@ -62,15 +63,7 @@ export const siteSettings = defineType({
               title: 'Seksjon',
               type: 'string',
               description: 'Hvilken seksjon menypunktet skal peke til.',
-              options: {
-                list: [
-                  {title: 'Kalender', value: 'kalender'},
-                  {title: 'Backstage', value: 'backstage'},
-                  {title: 'Venues', value: 'venues'},
-                  {title: 'Spillelister', value: 'spillelister'},
-                  {title: 'Oppslagstavla', value: 'bulletin'},
-                ],
-              },
+              options: {list: [...NAVIGATION_SECTIONS]},
             }),
           ],
         }),

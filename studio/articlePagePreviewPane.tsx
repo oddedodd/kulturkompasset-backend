@@ -1,6 +1,9 @@
 import React, {useEffect, useMemo, useState} from 'react'
 import {useClient} from 'sanity'
 
+import {navigationLabel, type NavigationItem} from '../lib/navigation'
+import {DEFAULT_LINK_SUMMARY} from '../schemaTypes/objects/pageBuilder/linkBlock'
+
 type Cta = {
   label?: string
   link?: string
@@ -53,6 +56,25 @@ type EventCardMember = {
 /** Et tekstfelt inneholder både vanlige avsnitt og innsatte arrangementskort. */
 type PortableMember = PortableBlock & EventCardMember
 
+/** Siden en `linkBlock` peker på, slik den kommer ut av GROQ-spørringen. */
+type LinkTarget = {
+  _id?: string
+  _type?: string
+  title?: string
+  slug?: string
+}
+
+/** Norske navn på dokumenttypene en intern lenke kan peke på. */
+const LINK_TARGET_LABELS: Record<string, string> = {
+  article: 'Artikkel',
+  event: 'Arrangement',
+  bulletin: 'Bulletin',
+  playlist: 'Spilleliste',
+  venue: 'Sted',
+  contributor: 'Bidragsyter',
+  category: 'Kategori',
+}
+
 type ImageWithAsset = {
   alt?: string
   caption?: string
@@ -80,6 +102,11 @@ type Block = {
   images?: ImageWithAsset[]
   linkedEvent?: {_ref?: string}
   linkedArticle?: {_ref?: string}
+  linkType?: string
+  internalTarget?: LinkTarget
+  externalUrl?: string
+  section?: string
+  summary?: string
 }
 
 type ArticleDoc = {
@@ -88,6 +115,7 @@ type ArticleDoc = {
   excerpt?: string
   heroImage?: ImageWithAsset
   pageBuilder?: Block[]
+  navigation?: NavigationItem[]
 }
 
 const EVENT_DATE_FORMAT: Intl.DateTimeFormatOptions = {
@@ -147,13 +175,32 @@ function renderInlineChildren(block: PortableBlock) {
     for (const mark of marks) {
       if (mark === 'strong') node = <strong key={`${block._key || 'b'}-s-${idx}`}>{node}</strong>
       else if (mark === 'em') node = <em key={`${block._key || 'b'}-e-${idx}`}>{node}</em>
-      else if (mark === 'underline') node = <span style={{textDecoration: 'underline'}} key={`${block._key || 'b'}-u-${idx}`}>{node}</span>
-      else if (mark === 'code') node = <code key={`${block._key || 'b'}-c-${idx}`} style={{background: '#f3f4f6', padding: '0.05rem 0.25rem', borderRadius: '4px'}}>{node}</code>
+      else if (mark === 'underline')
+        node = (
+          <span style={{textDecoration: 'underline'}} key={`${block._key || 'b'}-u-${idx}`}>
+            {node}
+          </span>
+        )
+      else if (mark === 'code')
+        node = (
+          <code
+            key={`${block._key || 'b'}-c-${idx}`}
+            style={{background: '#f3f4f6', padding: '0.05rem 0.25rem', borderRadius: '4px'}}
+          >
+            {node}
+          </code>
+        )
       else {
         const def = markDefsByKey.get(mark)
         if (def?._type === 'link' && def.href) {
           node = (
-            <a key={`${block._key || 'b'}-l-${idx}`} href={def.href} target="_blank" rel="noreferrer" style={{color: '#0b57d0'}}>
+            <a
+              key={`${block._key || 'b'}-l-${idx}`}
+              href={def.href}
+              target="_blank"
+              rel="noreferrer"
+              style={{color: '#0b57d0'}}
+            >
               {node}
             </a>
           )
@@ -327,22 +374,43 @@ function renderPortableBlocks(blocks?: PortableMember[]) {
 
     switch (block.style) {
       case 'h1':
-        nodes.push(<h1 key={key} style={{margin: '0.9rem 0 0.55rem'}}>{children}</h1>)
+        nodes.push(
+          <h1 key={key} style={{margin: '0.9rem 0 0.55rem'}}>
+            {children}
+          </h1>,
+        )
         break
       case 'h2':
-        nodes.push(<h2 key={key} style={{margin: '0.8rem 0 0.5rem'}}>{children}</h2>)
+        nodes.push(
+          <h2 key={key} style={{margin: '0.8rem 0 0.5rem'}}>
+            {children}
+          </h2>,
+        )
         break
       case 'h3':
-        nodes.push(<h3 key={key} style={{margin: '0.7rem 0 0.45rem'}}>{children}</h3>)
+        nodes.push(
+          <h3 key={key} style={{margin: '0.7rem 0 0.45rem'}}>
+            {children}
+          </h3>,
+        )
         break
       case 'h4':
-        nodes.push(<h4 key={key} style={{margin: '0.65rem 0 0.4rem'}}>{children}</h4>)
+        nodes.push(
+          <h4 key={key} style={{margin: '0.65rem 0 0.4rem'}}>
+            {children}
+          </h4>,
+        )
         break
       case 'blockquote':
         nodes.push(
           <blockquote
             key={key}
-            style={{margin: '0.6rem 0 1rem', padding: '0.45rem 0.75rem', borderLeft: '3px solid #9ca3af', color: '#374151'}}
+            style={{
+              margin: '0.6rem 0 1rem',
+              padding: '0.45rem 0.75rem',
+              borderLeft: '3px solid #9ca3af',
+              color: '#374151',
+            }}
           >
             {children}
           </blockquote>,
@@ -412,7 +480,11 @@ function HeroBlock({block}: {block: Block}) {
             {block.subheading}
           </p>
         )}
-        {block.cta && <div style={{marginTop: '1.2rem'}}><CtaButton cta={block.cta} /></div>}
+        {block.cta && (
+          <div style={{marginTop: '1.2rem'}}>
+            <CtaButton cta={block.cta} />
+          </div>
+        )}
       </div>
       {block.backgroundImage?.asset?.url && (
         <img
@@ -428,7 +500,9 @@ function HeroBlock({block}: {block: Block}) {
 function LeadBlock({block}: {block: Block}) {
   return (
     <section style={{marginBottom: '1.2rem'}}>
-      <p style={{margin: 0, fontSize: '1.08rem', lineHeight: 1.65, fontWeight: 700}}>{block.lead}</p>
+      <p style={{margin: 0, fontSize: '1.08rem', lineHeight: 1.65, fontWeight: 700}}>
+        {block.lead}
+      </p>
     </section>
   )
 }
@@ -450,13 +524,27 @@ function ImageGalleryBlockView({block}: {block: Block}) {
   return (
     <section style={{marginBottom: '1.2rem'}}>
       {block.title && <h3 style={{marginBottom: '0.7rem'}}>{block.title}</h3>}
-      <div style={{display: 'grid', gap: '0.7rem', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))'}}>
+      <div
+        style={{
+          display: 'grid',
+          gap: '0.7rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+        }}
+      >
         {images.map((img, idx) => (
           <figure key={`${block._key || 'gallery'}-${idx}`} style={{margin: 0}}>
             {img.asset?.url && (
-              <img src={img.asset.url} alt={img.alt || `Galleri ${idx + 1}`} style={{width: '100%'}} />
+              <img
+                src={img.asset.url}
+                alt={img.alt || `Galleri ${idx + 1}`}
+                style={{width: '100%'}}
+              />
             )}
-            {img.caption && <figcaption style={{fontSize: '12px', color: '#4b5563', marginTop: '0.25rem'}}>{img.caption}</figcaption>}
+            {img.caption && (
+              <figcaption style={{fontSize: '12px', color: '#4b5563', marginTop: '0.25rem'}}>
+                {img.caption}
+              </figcaption>
+            )}
           </figure>
         ))}
       </div>
@@ -484,9 +572,13 @@ function ImageTextView({block, right}: {block: Block; right?: boolean}) {
         alignItems: 'start',
       }}
     >
-      {!right && block.image?.asset?.url && <img src={block.image.asset.url} alt={block.image.alt || 'Bilde'} style={{width: '100%'}} />}
+      {!right && block.image?.asset?.url && (
+        <img src={block.image.asset.url} alt={block.image.alt || 'Bilde'} style={{width: '100%'}} />
+      )}
       <div>{content}</div>
-      {right && block.image?.asset?.url && <img src={block.image.asset.url} alt={block.image.alt || 'Bilde'} style={{width: '100%'}} />}
+      {right && block.image?.asset?.url && (
+        <img src={block.image.asset.url} alt={block.image.alt || 'Bilde'} style={{width: '100%'}} />
+      )}
     </section>
   )
 }
@@ -547,7 +639,14 @@ function VideoBlockView({block}: {block: Block}) {
   const embedUrl = getEmbedUrl(block.url)
 
   return (
-    <section style={{marginBottom: '1.2rem', padding: '0.9rem', border: '1px dashed #cbd5e1', borderRadius: '10px'}}>
+    <section
+      style={{
+        marginBottom: '1.2rem',
+        padding: '0.9rem',
+        border: '1px dashed #cbd5e1',
+        borderRadius: '10px',
+      }}
+    >
       <strong>Video</strong>
       <div style={{marginTop: '0.35rem'}}>{block.title || 'Uten tittel'}</div>
       {embedUrl ? (
@@ -685,7 +784,14 @@ function EmbedBlockView({block}: {block: Block}) {
   const spotify = getSpotifyEmbed(block.url)
 
   return (
-    <section style={{marginBottom: '1.2rem', padding: '0.9rem', border: '1px dashed #cbd5e1', borderRadius: '10px'}}>
+    <section
+      style={{
+        marginBottom: '1.2rem',
+        padding: '0.9rem',
+        border: '1px dashed #cbd5e1',
+        borderRadius: '10px',
+      }}
+    >
       <strong>Innbygging</strong>
       <div style={{marginTop: '0.35rem'}}>{block.title || 'Uten tittel'}</div>
       {spotify ? (
@@ -792,7 +898,9 @@ function BlockquoteView({block}: {block: Block}) {
           >
             {block.quote}
           </p>
-          {block.attribution && <cite style={{fontSize: '1rem', color: textColor}}>{block.attribution}</cite>}
+          {block.attribution && (
+            <cite style={{fontSize: '1rem', color: textColor}}>{block.attribution}</cite>
+          )}
         </blockquote>
       </section>
     )
@@ -809,7 +917,9 @@ function BlockquoteView({block}: {block: Block}) {
       }}
     >
       <p style={{marginTop: 0, marginBottom: '0.5rem', fontStyle: 'italic'}}>{block.quote}</p>
-      {block.attribution && <cite style={{fontSize: '13px', color: textColor}}>{block.attribution}</cite>}
+      {block.attribution && (
+        <cite style={{fontSize: '13px', color: textColor}}>{block.attribution}</cite>
+      )}
     </blockquote>
   )
 }
@@ -822,7 +932,92 @@ function DividerBlockView() {
   )
 }
 
-function renderBlock(block: Block) {
+/**
+ * Lenkekort. Intern lenke viser hvilken side det pekes på; ekstern viser
+ * adressen. Uten egen ingress brukes standardteksten fra skjemaet.
+ */
+function LinkBlockView({block, navigation}: {block: Block; navigation?: NavigationItem[]}) {
+  const isExternal = block.linkType === 'external'
+  const isSection = block.linkType === 'section'
+  const target = block.internalTarget
+
+  // Seksjoner arver teksten menypunktet har i Sideinnstillinger, slik at
+  // kortet viser det samme navnet som menyen.
+  const sectionLabel = block.section ? navigationLabel(block.section, navigation) : undefined
+
+  const title = block.title || (isSection ? sectionLabel : target?.title) || 'Lenke uten tittel'
+  const summary = block.summary || DEFAULT_LINK_SUMMARY
+  const imageUrl = block.image?.asset?.url
+
+  const typeLabel = target?._type ? LINK_TARGET_LABELS[target._type] || target._type : null
+  let destination: string | undefined
+  if (isExternal) {
+    destination = block.externalUrl
+  } else if (isSection) {
+    destination = sectionLabel
+  } else {
+    destination = [typeLabel, target?.slug].filter(Boolean).join(' · ')
+  }
+
+  let kind = 'Intern lenke'
+  if (isExternal) kind = 'Ekstern lenke'
+  else if (isSection) kind = 'Seksjon i menyen'
+
+  let missingTarget = !target
+  if (isExternal) missingTarget = !block.externalUrl
+  else if (isSection) missingTarget = !block.section
+
+  return (
+    <section
+      style={{
+        margin: '0 0 1.2rem',
+        border: `1px solid ${missingTarget ? '#fca5a5' : '#d1d5db'}`,
+        borderRadius: '12px',
+        overflow: 'hidden',
+        background: '#f9fafb',
+        display: 'grid',
+        gridTemplateColumns: imageUrl ? 'minmax(0, 12rem) minmax(0, 1fr)' : 'minmax(0, 1fr)',
+        alignItems: 'stretch',
+      }}
+    >
+      {imageUrl && (
+        <img
+          src={imageUrl}
+          alt={block.image?.alt || title}
+          style={{display: 'block', width: '100%', height: '100%', objectFit: 'cover'}}
+        />
+      )}
+      <div style={{padding: '0.9rem 1rem'}}>
+        <div
+          style={{
+            fontSize: '12px',
+            fontWeight: 600,
+            letterSpacing: '0.02em',
+            textTransform: 'uppercase',
+            color: '#4b5563',
+          }}
+        >
+          {kind}
+        </div>
+        <h3 style={{margin: '0.35rem 0 0.4rem', fontSize: '1.15rem', lineHeight: 1.25}}>{title}</h3>
+        <p style={{margin: '0 0 0.55rem', color: '#374151', lineHeight: 1.55}}>{summary}</p>
+        {missingTarget ? (
+          <span style={{color: '#b91c1c', fontWeight: 600}}>
+            {isExternal && 'Mangler adresse'}
+            {isSection && 'Mangler valgt seksjon'}
+            {!isExternal && !isSection && 'Mangler valgt side'}
+          </span>
+        ) : (
+          <span style={{color: '#0b57d0', fontWeight: 600, wordBreak: 'break-word'}}>
+            {destination} →
+          </span>
+        )}
+      </div>
+    </section>
+  )
+}
+
+function renderBlock(block: Block, navigation?: NavigationItem[]) {
   switch (block._type) {
     case 'heroBlock':
       return <HeroBlock block={block} />
@@ -846,10 +1041,14 @@ function renderBlock(block: Block) {
       return <BlockquoteView block={block} />
     case 'dividerBlock':
       return <DividerBlockView />
+    case 'linkBlock':
+      return <LinkBlockView block={block} navigation={navigation} />
     case 'cta':
       return (
         <section style={{marginBottom: '1.2rem'}}>
-          <CtaButton cta={{label: (block as unknown as Cta).label, link: (block as unknown as Cta).link}} />
+          <CtaButton
+            cta={{label: (block as unknown as Cta).label, link: (block as unknown as Cta).link}}
+          />
         </section>
       )
     default:
@@ -893,11 +1092,13 @@ export function ArticlePagePreviewPane(props: {documentId?: string}) {
         subtitle,
         excerpt,
         heroImage{alt, asset->{url}},
+        "navigation": *[_type == "siteSettings"][0].mainNavigation[]{label, section},
         pageBuilder[]{
           ...,
           image{alt, caption, asset->{url}},
           backgroundImage{alt, asset->{url}},
           images[]{alt, caption, asset->{url}},
+          internalTarget->{_id, _type, "title": coalesce(title, name), "slug": slug.current},
           content[]{
             ...,
             _type == "eventCard" => {
@@ -953,11 +1154,18 @@ export function ArticlePagePreviewPane(props: {documentId?: string}) {
         {Array.isArray(doc.pageBuilder) && doc.pageBuilder.length > 0 ? (
           doc.pageBuilder.map((block, index) => (
             <React.Fragment key={block._key || `${block._type}-${index}`}>
-              {renderBlock(block)}
+              {renderBlock(block, doc.navigation)}
             </React.Fragment>
           ))
         ) : (
-          <div style={{padding: '0.9rem', border: '1px dashed #d1d5db', borderRadius: '10px', color: '#6b7280'}}>
+          <div
+            style={{
+              padding: '0.9rem',
+              border: '1px dashed #d1d5db',
+              borderRadius: '10px',
+              color: '#6b7280',
+            }}
+          >
             Ingen blokker i Sidebygger ennå.
           </div>
         )}

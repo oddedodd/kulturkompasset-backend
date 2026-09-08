@@ -88,6 +88,7 @@ deployes, ligger i [import-av-arrangement.md](import-av-arrangement.md).
 - `cta`
 - `eventLink` (annotasjon i tekst)
 - `eventCard` (kort i tekst)
+- `linkBlock` (lenkekort i sidebyggeren: intern side, seksjon fra menyen, eller ekstern URL)
 
 ## 3. Hvordan relasjonene fungerer
 
