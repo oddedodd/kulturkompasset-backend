@@ -119,7 +119,8 @@ export const linkBlock = defineType({
       title: 'Bilde',
       type: 'image',
       description:
-        'Valgfritt bilde på kortet. Last opp et nytt, eller velg et fra bildebiblioteket.',
+        'Valgfritt. Last opp et bilde eller velg et fra bildebiblioteket. Står feltet tomt på ' +
+        'en intern lenke, arver kortet hovedbildet fra siden det lenkes til.',
       options: {hotspot: true},
       fields: [
         defineField({
@@ -143,8 +144,27 @@ export const linkBlock = defineType({
       targetTitle: 'internalTarget.title',
       targetName: 'internalTarget.name',
       media: 'image',
+      // Hovedbildet heter ikke det samme på alle typene, så vi henter alle
+      // variantene og tar den første som finnes.
+      targetHero: 'internalTarget.heroImage',
+      targetImage: 'internalTarget.image',
+      targetCover: 'internalTarget.coverImage',
+      targetLogo: 'internalTarget.logo',
     },
-    prepare({title, summary, linkType, externalUrl, section, targetTitle, targetName, media}) {
+    prepare({
+      title,
+      summary,
+      linkType,
+      externalUrl,
+      section,
+      targetTitle,
+      targetName,
+      media,
+      targetHero,
+      targetImage,
+      targetCover,
+      targetLogo,
+    }) {
       // Forhåndsvisningen kan ikke slå opp menyteksten, så seksjoner vises med
       // sitt kanoniske navn her. Selve kortet bruker menyteksten.
       const sectionTitle = section ? NAVIGATION_SECTION_TITLES[section] || section : undefined
@@ -159,10 +179,13 @@ export const linkBlock = defineType({
       const target = linkType === 'external' ? externalUrl : resolvedTarget
       const heading = title || resolvedTarget || 'Lenke uten tittel'
 
+      const inheritedMedia =
+        linkType === 'internal' ? targetHero || targetImage || targetCover || targetLogo : undefined
+
       return {
         title: heading,
         subtitle: [kind, target, summary || DEFAULT_LINK_SUMMARY].filter(Boolean).join(' · '),
-        media,
+        media: media || inheritedMedia,
       }
     },
   },

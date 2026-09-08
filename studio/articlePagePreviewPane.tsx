@@ -62,6 +62,8 @@ type LinkTarget = {
   _type?: string
   title?: string
   slug?: string
+  /** Hovedbildet på siden det lenkes til, brukt når kortet mangler eget bilde. */
+  image?: ImageWithAsset
 }
 
 /** Norske navn på dokumenttypene en intern lenke kan peke på. */
@@ -947,7 +949,12 @@ function LinkBlockView({block, navigation}: {block: Block; navigation?: Navigati
 
   const title = block.title || (isSection ? sectionLabel : target?.title) || 'Lenke uten tittel'
   const summary = block.summary || DEFAULT_LINK_SUMMARY
-  const imageUrl = block.image?.asset?.url
+
+  // Laster redaktøren ikke opp et eget bilde, arver kortet hovedbildet fra
+  // siden det lenkes til. Seksjoner og eksterne lenker har ingen slik kilde.
+  const fallbackImage = !isExternal && !isSection ? target?.image : undefined
+  const image = block.image?.asset?.url ? block.image : fallbackImage
+  const imageUrl = image?.asset?.url
 
   const typeLabel = target?._type ? LINK_TARGET_LABELS[target._type] || target._type : null
   let destination: string | undefined
@@ -983,7 +990,7 @@ function LinkBlockView({block, navigation}: {block: Block; navigation?: Navigati
       {imageUrl && (
         <img
           src={imageUrl}
-          alt={block.image?.alt || title}
+          alt={image?.alt || title}
           style={{display: 'block', width: '100%', height: '100%', objectFit: 'cover'}}
         />
       )}
@@ -1098,7 +1105,16 @@ export function ArticlePagePreviewPane(props: {documentId?: string}) {
           image{alt, caption, asset->{url}},
           backgroundImage{alt, asset->{url}},
           images[]{alt, caption, asset->{url}},
-          internalTarget->{_id, _type, "title": coalesce(title, name), "slug": slug.current},
+          internalTarget->{
+            _id,
+            _type,
+            "title": coalesce(title, name),
+            "slug": slug.current,
+            // Typene kaller hovedbildet sitt forskjellige ting: article og
+            // event bruker heroImage, bulletin og contributor image, playlist
+            // coverImage og venue logo.
+            "image": coalesce(heroImage, image, coverImage, logo){alt, asset->{url}}
+          },
           content[]{
             ...,
             _type == "eventCard" => {
