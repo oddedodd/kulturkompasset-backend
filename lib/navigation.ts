@@ -9,6 +9,7 @@
 export const NAVIGATION_SECTIONS = [
   {title: 'Kalender', value: 'kalender'},
   {title: 'Backstage', value: 'backstage'},
+  {title: 'Aktuelt', value: 'aktuelt'},
   {title: 'Venues', value: 'venues'},
   {title: 'Spillelister', value: 'spillelister'},
   {title: 'Oppslagstavla', value: 'bulletin'},
