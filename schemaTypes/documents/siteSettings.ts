@@ -108,6 +108,13 @@ export const siteSettings = defineType({
       description: 'Metadata/OG for oversiktssiden med backstage-innhold.',
     }),
     defineField({
+      name: 'seoAktuelt',
+      title: 'Aktuelt',
+      type: 'seo',
+      fieldset: 'seo',
+      description: 'Metadata/OG for oversiktssiden med aktuelt-innhold.',
+    }),
+    defineField({
       name: 'seoVenues',
       title: 'Venues',
       type: 'seo',
