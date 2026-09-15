@@ -42,6 +42,7 @@ export const article = defineType({
           {title: 'Om Kulturkompasset', value: 'om-kulturkompasset'},
           {title: 'Guide', value: 'guide'},
           {title: 'Anmeldelse', value: 'review'},
+          {title: 'Forhåndsvisning', value: 'preview'},
         ],
       },
       validation: (Rule) => Rule.required(),
