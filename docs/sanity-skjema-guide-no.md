@@ -73,6 +73,7 @@ deployes, ligger i [import-av-arrangement.md](import-av-arrangement.md).
 Bulletin-innsendinger og tips kan gjøres om til enten bulletin eller arrangement. Redaktøren velger
 i handlingsmenyen på dokumentet: «Gjør om til bulletin» eller «Gjør om til arrangement».
 
+- Innsendinger lagres som utkast og kan ikke publiseres direkte. De kan bare gjøres om eller slettes.
 - Det lages alltid en kladd. Ingenting blir offentlig før kladden er sett over og publisert.
 - Innsendingen slettes når kladden lages. Sjekk og noter kontaktinformasjonen først hvis du trenger den.
 - Telefon og e-post til innsender blir aldri med, fordi feltene i bulletin og arrangement er offentlige.

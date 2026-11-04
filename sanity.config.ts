@@ -31,7 +31,9 @@ export default defineConfig({
   document: {
     actions: (prev, context) => {
       if (context.schemaType === 'bulletinSubmission' || context.schemaType === 'tips') {
-        return [...prev, convertToBulletinAction, convertToEventAction]
+        // Innsendinger skal bli liggende som utkast, så de kan bare gjøres om eller slettes.
+        const allowed = prev.filter(({action}) => action !== 'publish' && action !== 'unpublish')
+        return [...allowed, convertToBulletinAction, convertToEventAction]
       }
 
       // Handlingen skjuler seg selv på arrangement som ikke er importert,
