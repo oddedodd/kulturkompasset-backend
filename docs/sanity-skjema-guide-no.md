@@ -81,6 +81,7 @@ deployes, ligger i [import-av-arrangement.md](import-av-arrangement.md).
 - `contributor`
 - `venue`
 - `partner`
+- `tips` (innsendte tips fra skjema i frontend, med kontaktinformasjon til innsender)
 
 ## Objekttyper
 
