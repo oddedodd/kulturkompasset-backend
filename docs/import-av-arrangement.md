@@ -113,19 +113,18 @@ Funksjonen lytter kun på `create`. Den patcher jobbdokumentet selv, og hadde
 
 | Kilde | Plattform | Hvordan dataene hentes |
 | --- | --- | --- |
-| Namsos kulturhus | DX (Gatsby) | Programmet er ikke server-rendret. Det ligger i byggebundelen `path---kulturprogram-<hash>.js` som minifisert JS. Hashen leses ut av HTML-en først, siden den endres ved hver ny bygging. |
+| Namsos kulturhus | DX (Gatsby) | Programmet er ikke server-rendret. Det ligger som JSON i Gatsbys sidedata på `/page-data/kulturprogram/page-data.json`. |
 | Kulturhuset Kuben (Grong) | DX (Gatsby) | Identisk oppsett som Namsos — samme parser. |
 | Kultur i Nærøysund | TicketCo | Server-rendret med schema.org-JSON-LD per arrangement. Den ryddigste av de tre. |
 
-`functions/import-events/dx.ts` er den skjøreste delen: den leser et minifisert
-JS-objektliteral. Slutter Namsos eller Grong å levere programmet i bundelen, feiler
-importen med en tydelig melding om at parseren må oppdateres — den finner ingen
-arrangement i stillhet.
+`functions/import-events/dx.ts` er den skjøreste delen, fordi sidedataen ikke er et
+offentlig API. Slutter Namsos eller Grong å levere programmet der, feiler importen med
+en tydelig melding om at parseren må oppdateres — den gir ikke en tom import i stillhet.
 
 I DX-dataene ligger forestillingene i `tickets[]`, hver med sin egen `date` og
 `location`. De må leses ut **i par** fra samme oppføring; blandes dato fra én og
-sted fra en annen, havner arrangementet på feil scene. `readShowings()` gjør
-dette, og hver oppføring blir sitt eget arrangement.
+sted fra en annen, havner arrangementet på feil scene. Hver oppføring blir derfor
+sitt eget arrangement.
 
 Stedsmatchingen ligger i `venues.ts`. Den prøver flere strategier fra strengest
 til løsest — eksakt navn, navn uten tegnsetting, navn uten parentes, prefiks,
