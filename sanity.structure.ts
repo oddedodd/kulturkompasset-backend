@@ -72,6 +72,16 @@ export const structure: StructureResolver = (S) =>
             .defaultOrdering([{field: 'submittedAt', direction: 'desc'}]),
         ),
       S.listItem()
+        .title('Tips')
+        .schemaType('tips')
+        .child(
+          S.documentList()
+            .title('Tips')
+            .schemaType('tips')
+            .filter('_type == "tips"')
+            .defaultOrdering([{field: 'submittedAt', direction: 'desc'}]),
+        ),
+      S.listItem()
         .title('Arrangement')
         .schemaType('event')
         .child(
@@ -213,6 +223,7 @@ export const structure: StructureResolver = (S) =>
           ? !singletonTypes.has(id) &&
               id !== 'article' &&
               id !== 'bulletinSubmission' &&
+              id !== 'tips' &&
               id !== 'bulletin' &&
               id !== 'event' &&
               id !== 'eventImport'

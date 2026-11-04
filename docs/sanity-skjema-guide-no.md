@@ -68,6 +68,19 @@ ikke redaksjonelt innhold. De er tomme på arrangement lagt inn for hånd.
 Full beskrivelse, inkludert hvordan kildene hentes og hvordan funksjonen
 deployes, ligger i [import-av-arrangement.md](import-av-arrangement.md).
 
+## 1e. Innsendinger og tips
+
+Bulletin-innsendinger og tips kan gjøres om til enten bulletin eller arrangement. Redaktøren velger
+i handlingsmenyen på dokumentet: «Gjør om til bulletin» eller «Gjør om til arrangement».
+
+- Det lages alltid en kladd. Ingenting blir offentlig før kladden er sett over og publisert.
+- Innsendingen slettes når kladden lages. Sjekk og noter kontaktinformasjonen først hvis du trenger den.
+- Telefon og e-post til innsender blir aldri med, fordi feltene i bulletin og arrangement er offentlige.
+- Kontaktperson følger bare med fra bulletin-innsending til bulletin. Fra tips må den fylles ut for hånd.
+- Felt som mangler må fylles ut før publisering, for eksempel arrangør på en bulletin laget fra tips.
+- På arrangement kobles sted og arrangør bare ved helt likt navn. Ellers står de i brødteksten, og
+  sted og medvirkende må velges for hånd.
+
 ## 2. Oversikt over aktive typer
 
 ## Dokumenttyper
@@ -81,6 +94,7 @@ deployes, ligger i [import-av-arrangement.md](import-av-arrangement.md).
 - `contributor`
 - `venue`
 - `partner`
+- `tips` (innsendte tips fra skjema i frontend, med kontaktinformasjon til innsender)
 
 ## Objekttyper
 

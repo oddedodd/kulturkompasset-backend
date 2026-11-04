@@ -13,8 +13,7 @@ gjennom det og publisert manuelt.
 5. Velg **«Lagre som arrangement og slett oppføring»** i handlingsmenyen nederst.
    Arrangementet publiseres og forsvinner fra Importerte arrangement.
 
-Knappen er den samme typen som «Godkjenn, opprett bulletin og slett innsending»
-på tips-innsendinger. Den er grået ut til Tittel, Start og Slug er fylt ut, og
+Knappen ligger i samme meny som «Gjør om til bulletin» på innsendinger og tips. Den er grået ut til Tittel, Start og Slug er fylt ut, og
 sier hva som mangler når du holder musepekeren over.
 
 ### Undermenyene
@@ -165,8 +164,8 @@ npx sanity blueprints plan                # forhåndsvis endringer før deploy
 
 ### «Lagre som arrangement og slett oppføring»
 
-`studio/publishImportedEventAction.tsx` er en dokument-handling som speiler
-`approveBulletinSubmissionAction`. Forskjellen er at et importert arrangement
+`studio/publishImportedEventAction.tsx` er en dokument-handling for importerte
+arrangement. Et importert arrangement er
 allerede *er* av typen `event` — det som skal bort er importsporet, ikke
 dokumentet. Handlingen publiserer kladden og fjerner `importSource`,
 `importWarning`, `importVenueName`, `importImageUrl` og `importedAt` i én
